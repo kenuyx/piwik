@@ -1,0 +1,19 @@
+{
+    "name": "piwikpro/AdvancedCampaignReporting",
+    "type": "piwik-plugin",
+    "version": "1.3.1",
+    "description": "Track up to five Campaigns parameter (campaign, source, medium, keyword, content), Segment users by any campaign dimension, and get advanced reports",
+    "license": "GPL v3+",
+    "license_homepage": "http://piwik.pro/contact",
+    "homepage": "http://piwik.pro",
+    "authors": [
+        {
+            "name": "PiwikPRO",
+            "email": "contact@piwik.pro"
+        }
+    ],
+    "require": {
+        "piwik/piwik": "2.16.*",
+        "php": ">=5.4"
+    }
+}

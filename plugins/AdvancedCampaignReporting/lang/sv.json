@@ -1,0 +1,15 @@
+{
+    "AdvancedCampaignReporting": {
+        "Title": "Kampanjer",
+        "Name": "Namn",
+        "Keyword": "Nyckelord",
+        "Source": "Källa",
+        "Content": "Innehåll",
+        "CampaignId": "Kampanj-ID",
+        "CombinedKeywordContent": "Nyckelord - Innehåll",
+        "Names": "Kampanjnamn",
+        "Keywords": "Nyckelord för kampanj",
+        "Sources": "Kampanjkällor",
+        "Contents": "Kampanjinnehåll"
+    }
+}
