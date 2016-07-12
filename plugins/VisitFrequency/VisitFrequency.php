@@ -32,7 +32,9 @@ class VisitFrequency extends \Piwik\Plugin
             'bounce_rate_returning'      => 'VisitFrequency_ColumnBounceRateForReturningVisits',
             'nb_actions_per_visit_returning' => 'VisitFrequency_ColumnAvgActionsPerReturningVisit',
             'nb_uniq_visitors_returning'     => 'VisitFrequency_ColumnUniqueReturningVisitors',
-            'nb_users_returning' => 'VisitFrequency_ColumnReturningUsers'
+            'nb_users_returning' => 'VisitFrequency_ColumnReturningUsers',
+            'nb_visits_rate_new'  => 'VisitFrequency_ColumnNewVisitsRate',
+            'nb_uniq_visitors_new' => 'VisitFrequency_ColumnUniqueNewVisitors'
         );
 
         $translations = array_merge($translations, $metrics);

@@ -1,0 +1,17 @@
+<h2 piwik-enriched-headline
+    data-graph-id="Referrers.getSourceMediumGraph"
+>{{ 'General_EvolutionOverPeriod'|translate }}</h2>
+
+{{ graphEvolutionSourceMedium|raw }}
+
+<div style="clear:both;"></div>
+
+<h2 piwik-enriched-headline>{{ 'Referrers_Referrers'|translate }}</h2>
+{{ referrersReportsByDimension|raw }}
+
+{#{% if combinedSourceMedium|default is not empty %}#}
+    {#<h2 piwik-enriched-headline>{{ 'AdvancedCampaignReporting_CombinedSourcesMediums'|translate }}</h2>#}
+    {#{{ combinedSourceMedium|raw }}#}
+{#{% endif %}#}
+
+{% include "_sparklineFooter.twig" %}

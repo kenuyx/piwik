@@ -11,6 +11,8 @@
         "ColumnSumVisitLengthReturning": "Total time spent by returning visitors (in seconds)",
         "ColumnUniqueReturningVisitors": "Unique returning visitors",
         "ColumnReturningUsers": "Returning Users",
+        "ColumnNewVisitsRate": "% New Visits",
+        "ColumnUniqueNewVisitors": "New Visitors",
         "PluginDescription": "Reports metrics about your first time new visitors and returning visitors.",
         "ReturnActions": "%s actions by the returning visits",
         "ReturnAverageVisitDuration": "%s average visit duration for returning visitors",
