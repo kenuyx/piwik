@@ -52,7 +52,7 @@ class Controller extends \Piwik\Plugin\Controller
      */
     private $translationHelper;
 
-    private function formatConversionRate($conversionRate, $columnName = 'conversion_rate')
+    protected function formatConversionRate($conversionRate, $columnName = 'conversion_rate')
     {
         if ($conversionRate instanceof DataTable) {
             if ($conversionRate->getRowsCount() == 0) {
@@ -417,7 +417,7 @@ class Controller extends \Piwik\Plugin\Controller
      *                                goal.
      * @return string
      */
-    private function getGoalReportsByDimensionTable($conversions, $ecommerce = false, $cartNbConversions = false)
+    protected function getGoalReportsByDimensionTable($conversions, $ecommerce = false, $cartNbConversions = false)
     {
         $preloadAbandonedCart = $cartNbConversions !== false && $conversions == 0;
 
