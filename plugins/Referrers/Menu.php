@@ -17,7 +17,7 @@ class Menu extends \Piwik\Plugin\Menu
         $menu->addReferrersItem('', array(), 20);
         $menu->addReferrersItem('General_Overview', $this->urlForAction('index'), 1);
         $menu->addReferrersItem('Referrers_WidgetGetAll', $this->urlForAction('allReferrers'), 2);
-        $menu->addReferrersItem('Referrers_WidgetSourceMedium', $this->urlForAction('sourceMedium'), 3);
+        $menu->addReferrersItem('Referrers_WidgetSourceMedium', $this->urlForAction('getSourceMedium'), 3);
         $menu->addReferrersItem('Referrers_SubmenuSearchEngines', $this->urlForAction('getSearchEnginesAndKeywords'), 4);
         $menu->addReferrersItem('Referrers_SubmenuWebsites', $this->urlForAction('indexWebsites'), 5);
     }

@@ -8,13 +8,13 @@
  */
 namespace Piwik\Plugins\Referrers;
 
+use Piwik\Plugin\Manager AS PluginManager;
 use Piwik\API\Request;
 use Piwik\Common;
 use Piwik\DataTable\Map;
 use Piwik\Metrics;
 use Piwik\Period\Range;
 use Piwik\Piwik;
-use Piwik\Plugin\Manager AS PluginManager;
 use Piwik\Plugin\Report;
 use Piwik\SettingsPiwik;
 use Piwik\Translation\Translator;
@@ -126,16 +126,14 @@ class Controller extends \Piwik\Plugin\Controller
         return $view->render();
     }
 
-    public function sourceMedium()
+    public function getSourceMedium()
     {
         $view = new View('@Referrers/sourceMedium');
         $this->setPeriodVariablesView($view);
         $view->graphEvolutionSourceMedium = $this->getSourceMediumEvolutionGraph(array(), array('nb_visits'), 'getIndexGraph');
-        $view->referrersReportsByDimension = $this->renderReport('getAll');
-//        $isAdvancedCampaignReportingEnabled = PluginManager::getInstance()->isPluginActivated('AdvancedCampaignReporting');
-//        if ($isAdvancedCampaignReportingEnabled) {
-//            $view->combinedSourceMedium = $this->renderReport(Report::factory('AdvancedCampaignReporting', 'getKeyword'));
-//        }
+
+        $view->referrersReportsByDimension = $this->renderReport('getSourceMedium');
+
         return $view->render();
     }
 

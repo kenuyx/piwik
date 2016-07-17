@@ -226,10 +226,18 @@ class AdvancedCampaignReporting extends \Piwik\Plugin
      */
     public function dispatchAdvancedCampaigns(&$module, &$action, &$parameters)
     {
-        if($module == 'Referrers'
-            && $action == 'menuGetCampaigns') {
-            $module = 'AdvancedCampaignReporting';
-            $action = 'indexCampaigns';
+        if ($module == 'Referrers')
+        {
+            if ($action == 'menuGetCampaigns')
+            {
+                $module = 'AdvancedCampaignReporting';
+                $action = 'indexCampaigns';
+            }
+            else if ($action == 'getSourceMedium')
+            {
+                $module = 'AdvancedCampaignReporting';
+                $action = 'combineSourceMedium';
+            }
         }
     }
 
