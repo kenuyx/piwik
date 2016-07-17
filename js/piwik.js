@@ -972,7 +972,7 @@ if (typeof JSON2 !== 'object' && typeof window.JSON === 'object' && window.JSON.
     onload, src,
     min, round, random,
     exec,
-    res, width, height, devicePixelRatio,
+    res, width, height,
     pdf, qt, realp, wma, dir, fla, java, gears, ag,
     hook, getHook, getVisitorId, getVisitorInfo, setUserId, getUserId, setSiteId, getSiteId, setTrackerUrl, getTrackerUrl, appendToTrackingUrl, getRequest, addPlugin,
     getAttributionInfo, getAttributionCampaignName, getAttributionCampaignKeyword,
@@ -1156,6 +1156,17 @@ if (typeof window.Piwik !== 'object') {
             return isEmpty;
         }
 
+        /**
+         * Logs an error in the console.
+         *  Note: it does not generate a JavaScript error, so make sure to also generate an error if needed.
+         * @param message
+         */
+        function logConsoleError(message) {
+            if (console !== undefined && console && console.error) {
+                console.error(message);
+            }
+        }
+
         /*
          * apply wrapper
          *
@@ -1173,11 +1184,20 @@ if (typeof window.Piwik !== 'object') {
 
                 for (j = 0; j < asyncTrackers.length; j++) {
                     if (isString(f)) {
-                        asyncTrackers[j][f].apply(asyncTrackers[j], parameterArray);
+
+                        if(asyncTrackers[j][f]) {
+                            asyncTrackers[j][f].apply(asyncTrackers[j], parameterArray);
+                        } else {
+                            var message = 'The method \'' + f + '\' was not found in "_paq" variable.  Please have a look at the Piwik tracker documentation: http://developer.piwik.org/api-reference/tracking-javascript';
+                            logConsoleError(message);
+                            throw new TypeError(message);
+                        }
+
                         if (f === 'addTracker') {
                             // addTracker adds an entry to asyncTrackers and would otherwise result in an endless loop
                             break;
                         }
+
                         if (f === 'setTrackerUrl' || f === 'setSiteId') {
                             // these two methods should be only executed on the first tracker
                             break;
@@ -1644,6 +1664,11 @@ if (typeof window.Piwik !== 'object') {
                 k++;
             }
             return -1;
+        }
+
+        function stringStartsWith(str, prefix) {
+            str = String(str);
+            return str.lastIndexOf(prefix, 0) === 0;
         }
 
         function stringEndsWith(str, suffix) {
@@ -2706,13 +2731,24 @@ if (typeof window.Piwik !== 'object') {
         }
 
         function isInsideAnIframe () {
-            if (isDefined(windowAlias.frameElement)) {
-                return (windowAlias.frameElement && String(windowAlias.frameElement.nodeName).toLowerCase() === 'iframe');
+            var frameElement;
+
+            try {
+                // If the parent window has another origin, then accessing frameElement
+                // throws an Error in IE. see issue #10105.
+                frameElement = windowAlias.frameElement;
+            } catch(e) {
+                // When there was an Error, then we know we are inside an iframe.
+                return true;
+            }
+
+            if (isDefined(frameElement)) {
+                return (frameElement && String(frameElement.nodeName).toLowerCase() === 'iframe') ? true : false;
             }
 
             try {
                 return windowAlias.self !== windowAlias.top;
-            } catch (e) {
+            } catch (e2) {
                 return true;
             }
         }
@@ -2782,7 +2818,7 @@ if (typeof window.Piwik !== 'object') {
                 configCustomUrl,
 
                 // Document title
-                configTitle = documentAlias.title,
+                configTitle = '',
 
                 // Extensions to be treated as download links
                 configDownloadExtensions = ['7z','aac','apk','arc','arj','asf','asx','avi','azw3','bin','csv','deb','dmg','doc','docx','epub','exe','flv','gif','gz','gzip','hqx','ibooks','jar','jpg','jpeg','js','mobi','mp2','mp3','mp4','mpg','mpeg','mov','movie','msi','msp','odb','odf','odg','ods','odt','ogg','ogv','pdf','phps','png','ppt','pptx','qt','qtm','ra','ram','rar','rpm','sea','sit','tar','tbz','tbz2','bz','bz2','tgz','torrent','txt','wav','wma','wmv','wpd','xls','xlsx','xml','z','zip'],
@@ -2834,7 +2870,7 @@ if (typeof window.Piwik !== 'object') {
                 // Default is user agent defined.
                 configCookiePath,
 
-                // Cookies are disabled
+                // First-party cookies are disabled
                 configCookiesDisabled = false,
 
                 // Do Not Track
@@ -2923,6 +2959,13 @@ if (typeof window.Piwik !== 'object') {
 
                 // Domain hash value
                 domainHash;
+
+            // Document title
+            try {
+                configTitle = documentAlias.title;
+            } catch(e) {
+                configTitle = '';
+            }
 
             /*
              * Set cookie value
@@ -3043,10 +3086,17 @@ if (typeof window.Piwik !== 'object') {
             function getPathName(url) {
                 var parser = document.createElement('a');
                 if (url.indexOf('//') !== 0 && url.indexOf('http') !== 0) {
+                    if (url.indexOf('*') === 0) {
+                        url = url.substr(1);
+                    }
+                    if (url.indexOf('.') === 0) {
+                        url = url.substr(1);
+                    }
                     url = 'http://' + url;
                 }
 
                 parser.href = content.toAbsoluteUrl(url);
+
                 if (parser.pathname) {
                     return parser.pathname;
                 }
@@ -3056,7 +3106,15 @@ if (typeof window.Piwik !== 'object') {
 
             function isSitePath (path, pathAlias)
             {
-                var matchesAnyPath = (!pathAlias || pathAlias === '/' || pathAlias === '/*');
+                if(!stringStartsWith(pathAlias, '/')) {
+                    pathAlias = '/' + pathAlias;
+                }
+
+                if(!stringStartsWith(path, '/')) {
+                    path = '/' + path;
+                }
+
+                var matchesAnyPath = (pathAlias === '/' || pathAlias === '/*');
 
                 if (matchesAnyPath) {
                     return true;
@@ -3064,10 +3122,6 @@ if (typeof window.Piwik !== 'object') {
 
                 if (path === pathAlias) {
                     return true;
-                }
-
-                if (!path) {
-                    return false;
                 }
 
                 pathAlias = String(pathAlias).toLowerCase();
@@ -3177,6 +3231,8 @@ if (typeof window.Piwik !== 'object') {
                     iterator = 0; // To avoid JSLint warning of empty block
                     if (typeof callback === 'function') { callback(); }
                 };
+                // make sure to actually load an image so callback gets invoked
+                request = request.replace("send_image=0","send_image=1");
                 image.src = configTrackerUrl + (configTrackerUrl.indexOf('?') < 0 ? '?' : '&') + request;
             }
 
@@ -3970,9 +4026,10 @@ if (typeof window.Piwik !== 'object') {
                     lastEcommerceOrderTs,
                     now = new Date(),
                     items = [],
-                    sku;
+                    sku,
+                    isEcommerceOrder = String(orderId).length;
 
-                if (String(orderId).length) {
+                if (isEcommerceOrder) {
                     request += '&ec_id=' + encodeWrapper(orderId);
                     // Record date of order in the visitor cookie
                     lastEcommerceOrderTs = Math.round(now.getTime() / 1000);
@@ -4028,6 +4085,10 @@ if (typeof window.Piwik !== 'object') {
                 }
                 request = getRequest(request, configCustomData, 'ecommerce', lastEcommerceOrderTs);
                 sendRequest(request, configTrackerPause);
+
+                if (isEcommerceOrder) {
+                    ecommerceItems = {};
+                }
             }
 
             function logEcommerceOrder(orderId, grandTotal, subTotal, tax, shipping, discount) {
@@ -4987,8 +5048,7 @@ if (typeof window.Piwik !== 'object') {
                         java: 'application/x-java-vm',
                         gears: 'application/x-googlegears',
                         ag: 'application/x-silverlight'
-                    },
-                    devicePixelRatio = windowAlias.devicePixelRatio || 1;
+                    };
 
                 // detect browser features except IE < 11 (IE 11 user agent is no longer MSIE)
                 if (!((new RegExp('MSIE')).test(navigatorAlias.userAgent))) {
@@ -5019,8 +5079,8 @@ if (typeof window.Piwik !== 'object') {
                     browserFeatures.cookie = hasCookies();
                 }
 
-                var width = parseInt(screenAlias.width, 10) * devicePixelRatio;
-                var height = parseInt(screenAlias.height, 10) * devicePixelRatio;
+                var width = parseInt(screenAlias.width, 10);
+                var height = parseInt(screenAlias.height, 10);
                 browserFeatures.res = parseInt(width, 10) + 'x' + parseInt(height, 10);
             }
 
@@ -5572,19 +5632,39 @@ if (typeof window.Piwik !== 'object') {
                  * Also supports page wildcard, eg 'piwik.org/index*'. In this case all links
                  * that don't go to piwik.org/index* would be treated as outlinks.
                  *
+                 * The current domain will be added automatically if no given host alias contains a path and if no host
+                 * alias is already given for the current host alias. Say you are on "example.org" and set
+                 * "hostAlias = ['example.com', 'example.org/test']" then the current "example.org" domain will not be
+                 * added as there is already a more restrictive hostAlias 'example.org/test' given. We also do not add
+                 * it automatically if there was any other host specifying any path like
+                 * "['example.com', 'example2.com/test']". In this case we would also not add the current
+                 * domain "example.org" automatically as the "path" feature is used. As soon as someone uses the path
+                 * feature, for Piwik JS Tracker to work correctly in all cases, one needs to specify all hosts
+                 * manually.
+                 *
                  * @param string|array hostsAlias
                  */
                 setDomains: function (hostsAlias) {
                     configHostsAlias = isString(hostsAlias) ? [hostsAlias] : hostsAlias;
 
-                    var hasDomainAliasAlready = false, i;
-                    for (i in configHostsAlias) {
-                        if (Object.prototype.hasOwnProperty.call(configHostsAlias, i)
-                            && isSameHost(domainAlias, domainFixup(String(configHostsAlias[i])))) {
+                    var hasDomainAliasAlready = false, i = 0, alias;
+                    for (i; i < configHostsAlias.length; i++) {
+                        alias = String(configHostsAlias[i]);
+
+                        if (isSameHost(domainAlias, domainFixup(alias))) {
                             hasDomainAliasAlready = true;
+                            break;
+                        }
+
+                        var pathName = getPathName(alias);
+                        if (pathName && pathName !== '/' && pathName !== '/*') {
+                            hasDomainAliasAlready = true;
+                            break;
                         }
                     }
 
+                    // The current domain will be added automatically if no given host alias contains a path
+                    // and if no host alias is already given for the current host alias.
                     if (!hasDomainAliasAlready) {
                         /**
                          * eg if domainAlias = 'piwik.org' and someone set hostsAlias = ['piwik.org/foo'] then we should
@@ -6320,6 +6400,7 @@ if (typeof window.Piwik !== 'object') {
                  * Adds an item (product) that is in the current Cart or in the Ecommerce order.
                  * This function is called for every item (product) in the Cart or the Order.
                  * The only required parameter is sku.
+                 * The items are deleted from this JavaScript object when the Ecommerce order is tracked via the method trackEcommerceOrder.
                  *
                  * @param string sku (required) Item's SKU Code. This is the unique identifier for the product.
                  * @param string name (optional) Item's name
@@ -6338,6 +6419,7 @@ if (typeof window.Piwik !== 'object') {
                  * If the Ecommerce order contains items (products), you must call first the addEcommerceItem() for each item in the order.
                  * All revenues (grandTotal, subTotal, tax, shipping, discount) will be individually summed and reported in Piwik reports.
                  * Parameters orderId and grandTotal are required. For others, you can set to false if you don't need to specify them.
+                 * After calling this method, items added to the cart will be removed from this JavaScript object.
                  *
                  * @param string|int orderId (required) Unique Order ID.
                  *                   This will be used to count this order only once in the event the order page is reloaded several times.
@@ -6356,6 +6438,7 @@ if (typeof window.Piwik !== 'object') {
                  * Tracks a Cart Update (add item, remove item, update item).
                  * On every Cart update, you must call addEcommerceItem() for each item (product) in the cart, including the items that haven't been updated since the last cart update.
                  * Then you can call this function with the Cart grandTotal (typically the sum of all items' prices)
+                 * Calling this method does not remove from this JavaScript object the items that were added to the cart via addEcommerceItem
                  *
                  * @param float grandTotal (required) Items (products) amount in the Cart
                  */
@@ -6404,9 +6487,7 @@ if (typeof window.Piwik !== 'object') {
                             delete paq[iterator];
 
                             if (appliedMethods[methodName] > 1) {
-                                if (console !== undefined && console && console.error) {
-                                    console.error('The method ' + methodName + ' is registered more than once in "paq" variable. Only the last call has an effect. Please have a look at the multiple Piwik trackers documentation: http://developer.piwik.org/guides/tracking-javascript-guide#multiple-piwik-trackers');
-                                }
+                                logConsoleError('The method ' + methodName + ' is registered more than once in "_paq" variable. Only the last call has an effect. Please have a look at the multiple Piwik trackers documentation: http://developer.piwik.org/guides/tracking-javascript-guide#multiple-piwik-trackers');
                             }
 
                             appliedMethods[methodName]++;
