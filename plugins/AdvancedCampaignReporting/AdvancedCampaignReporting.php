@@ -25,6 +25,7 @@ class AdvancedCampaignReporting extends \Piwik\Plugin
     public function getListHooksRegistered()
     {
         return array(
+            'Live.getAllVisitorDetails'                     => 'extendVisitorDetails',
             'Tracker.newVisitorInformation'                 => 'enrichVisitWithAdvancedCampaign',
             'Tracker.newConversionInformation'              => 'enrichConversionWithAdvancedCampaign',
             'Tracker.PageUrl.getQueryParametersToExclude'   => 'getQueryParametersToExclude',
@@ -59,6 +60,17 @@ class AdvancedCampaignReporting extends \Piwik\Plugin
                 }
             }
         }
+    }
+
+    public function extendVisitorDetails(&$visitor, $details)
+    {
+        $instance = new Visitor($details);
+
+        $visitor['campaignName']     = $instance->getCampaignName();
+        $visitor['campaignKeyword']  = $instance->getCampaignKeyword();
+        $visitor['campaignSource']   = $instance->getCampaignSource();
+        $visitor['campaignMedium']   = $instance->getCampaignMedium();
+        $visitor['campaignContent']  = $instance->getCampaignContent();
     }
 
     public function uninstall()

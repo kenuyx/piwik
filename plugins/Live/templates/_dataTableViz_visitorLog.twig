@@ -81,6 +81,8 @@
         {% if visitor.getColumn('referrerType') == 'campaign' %}
             {{ 'Referrers_ColumnCampaign'|translate }}: {{ visitor.getColumn('referrerName') }}
             {% if visitor.getColumn('referrerKeyword') is not empty %} - {{ visitor.getColumn('referrerKeyword') }}{% endif %}
+            <br/>{{ 'Referrers_ColumnSource'|translate }}: {{ visitor.getColumn('campaignSource') }}
+            <br/>{{ 'Referrers_ColumnMedium'|translate }}: {{ visitor.getColumn('campaignMedium') }}
         {% endif %}
         {% if visitor.getColumn('referrerType') == 'search' %}
             {%- set keywordNotDefined = 'General_NotDefined'|translate('General_ColumnKeyword'|translate) -%}

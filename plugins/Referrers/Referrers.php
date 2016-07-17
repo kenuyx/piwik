@@ -8,10 +8,8 @@
  */
 namespace Piwik\Plugins\Referrers;
 
-use Piwik\ArchiveProcessor;
 use Piwik\Common;
 use Piwik\Piwik;
-use Piwik\Plugins\CoreVisualizations\Visualizations\HtmlTable;
 use Piwik\Plugins\SitesManager\SiteUrls;
 
 /**
