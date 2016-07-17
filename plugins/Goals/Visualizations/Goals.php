@@ -14,7 +14,6 @@ use Piwik\Piwik;
 use Piwik\Plugins\CoreVisualizations\Visualizations\HtmlTable;
 use Piwik\Plugins\Goals\API as APIGoals;
 use Piwik\Site;
-use Piwik\View;
 
 /**
  * DataTable Visualization that derives from HtmlTable and sets show_goals_columns to true.
@@ -81,6 +80,7 @@ class Goals extends HtmlTable
 
         // add goals columns
         $this->config->filters[] = array('AddColumnsProcessedMetricsGoal', array($enable = true, $idGoal, $goalsToProcess), $priority = true);
+        $this->config->filters[] = array('AddSummaryRow', Piwik::translate('General_Total'));
     }
 
     private function setPropertiesForEcommerceView()
