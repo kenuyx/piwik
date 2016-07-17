@@ -9,7 +9,6 @@
 namespace Piwik\Plugins\Ecommerce;
 
 use Exception;
-use Piwik\DataTable;
 use Piwik\FrontController;
 use Piwik\Piwik;
 use Piwik\Translation\Translator;
@@ -36,8 +35,17 @@ class Controller extends \Piwik\Plugins\Goals\Controller
             throw new Exception("Ecommerce Tracking requires that the plugin Custom Variables is enabled. Please enable the plugin CustomVariables (or ask your admin).");
         }
 
-        $view = $this->getGoalReportView($idGoal = Piwik::LABEL_ID_GOAL_IS_ECOMMERCE_ORDER);
-        $view->displayFullReport = false;
+        $view = $this->getGoalReportView($idGoal = Piwik::LABEL_ID_GOAL_IS_ECOMMERCE_ORDER, array(
+            'category' => Piwik::translate('AdvancedCampaignReporting_Title'),
+            'name' => Piwik::translate('AdvancedCampaignReporting_CombinedSourcesMediums'),
+            'module' => 'AdvancedCampaignReporting',
+            'action' => 'getSourceMedium',
+            'dimension' => Piwik::translate('AdvancedCampaignReporting_CombinedSourceMedium'),
+            'actionToLoadSubTables' => 'getNameFromSourceMediumId',
+            'title' => Piwik::translate('AdvancedCampaignReporting_CombinedSourceMedium'),
+            'order' => 6,
+        ));
+        $view->displayFullReport = true;
         $view->headline = $this->translator->translate('General_EvolutionOverPeriod');
 
         return $view->render();

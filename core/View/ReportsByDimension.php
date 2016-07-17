@@ -32,6 +32,7 @@ class ReportsByDimension extends View
         parent::__construct('@CoreHome/ReportsByDimension/_reportsByDimension');
         $this->dimensionCategories = array();
         $this->id = $id;
+        $this->uniqueReport = false;
     }
 
     /**
@@ -74,6 +75,32 @@ class ReportsByDimension extends View
     }
 
     /**
+     * Adds a report to the list of reports to display.
+     *
+     * @param string $category The report's category. Can be a i18n token.
+     * @param string $title The report's title. Can be a i18n token.
+     * @param string $action The controller action used to load the report, ie, Referrers.getAll
+     * @param array $params The list of query parameters to use when loading the report.
+     *                      This list overrides query parameters currently in use. For example,
+     *                        array('idSite' => 2, 'viewDataTable' => 'goalsTable')
+     *                      would mean the goals report for site w/ ID=2 will always be loaded.
+     */
+    public function setReport($category, $title, $action, $params = array())
+    {
+        list($module, $action) = explode('.', $action);
+        $params = array('module' => $module, 'action' => $action) + $params;
+
+        $categories = array();
+        $categories[$category][] = array(
+            'title'  => $title,
+            'params' => $params,
+            'url'    => Url::getCurrentQueryStringWithParametersModified($params)
+        );
+        $this->dimensionCategories = $categories;
+        $this->uniqueReport = true;
+    }
+
+    /**
      * @return string The ID specified in the constructor, usually the plugin name
      */
     public function getId()
@@ -96,7 +123,9 @@ class ReportsByDimension extends View
          *
          * @param ReportsByDimension $this The view instance.
          */
-        Piwik::postEvent('View.ReportsByDimension.render', array($this));
+        if (!$this->uniqueReport) {
+            Piwik::postEvent('View.ReportsByDimension.render', array($this));
+        }
 
         $this->firstReport = "";
 
