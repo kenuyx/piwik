@@ -53,7 +53,7 @@ return array(
     'KYD' => array('$', 'Cayman Islands dollar'),
     'XAF' => array('Fr', 'Central African CFA franc'),
     'CLP' => array('$', 'Chilean peso'),
-    'CNY' => array('元', 'Chinese yuan'),
+    'CNY' => array('¥', 'Chinese yuan'),
     'COP' => array('$', 'Colombian peso'),
     'KMF' => array('Fr', 'Comorian franc'),
     'CDF' => array('Fr', 'Congolese franc'),

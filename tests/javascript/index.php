@@ -5,6 +5,13 @@
     <meta charset="utf-8">
     <title>piwik.js: Unit Tests</title>
 <?php
+
+$cacheBuster = md5(uniqid(mt_rand(), true));
+
+// Note: when you want to debug the piwik.js during the tests, you need to set a cache buster that is always the same
+// between requests so the browser knows it is the same file and know where to breakpoint.
+//$cacheBuster= 'nocb'; // uncomment to debug
+
 $root = dirname(__FILE__) . '/../..';
 
 try {
@@ -53,7 +60,7 @@ testTrackPageViewAsync();
 ?>
  </script>
  <script src="../lib/q-1.4.1/q.js" type="text/javascript"></script>
- <script src="../../js/piwik.js?rand=<?php echo md5(uniqid(mt_rand(), true)) ?>" type="text/javascript"></script>
+ <script src="../../js/piwik.js?rand=<?php echo $cacheBuster ?>" type="text/javascript"></script>
  <script src="../../plugins/Overlay/client/urlnormalizer.js" type="text/javascript"></script>
  <script src="piwiktest.js" type="text/javascript"></script>
  <link rel="stylesheet" href="assets/qunit.css" type="text/css" media="screen" />
@@ -76,9 +83,10 @@ testTrackPageViewAsync();
 </style>
  <script src="../../libs/bower_components/jquery/dist/jquery.min.js" type="text/javascript"></script>
  <script src="assets/qunit.js" type="text/javascript"></script>
- <script src="jslint/jslint.js" type="text/javascript"></script>
+
  <script type="text/javascript">
  QUnit.config.reorder = false;
+ QUnit.config.altertitle = false;
 function _e(id){
     if (document.getElementById)
         return document.getElementById(id);
@@ -434,18 +442,53 @@ function PiwikTest() {
 
     test("JSLint", function() {
         expect(1);
-        var src = '<?php
-            $src = file_get_contents('../../js/piwik.js');
-            $src = strtr($src, array('\\'=>'\\\\',"'"=>"\\'",'"'=>'\\"',"\r"=>'\\r',"\n"=>'\\n','</'=>'<\/'));
-            $src = substr($src, strpos($src, '/* startjslint */'));
-            echo "$src"; ?>';
 
-        var result = JSLINT(src);
-        ok( result, "JSLint" );
-        if (console && console.log && !result) {
-            console.log('JSLINT errors', JSLINT.errors);
-        }
-//      alert(JSLINT.report(true));
+        stop();
+
+        $.getScript("jslint/jslint.js", function(){
+
+            var src = '<?php
+
+            // Once we use JSHint instead of jslint, we could remove a few lines below,
+            // to use instead the feature to disable jshint for the JSON2 block
+//             /* jshint ignore:start */
+//             // Code here will be linted with ignored by JSHint.
+//             /* jshint ignore:end */
+
+
+            function getLineCountJsLintStarted($src,$contentRemovedFromPos) {
+                $contentRemoved = substr($src, 0, $contentRemovedFromPos);
+                // the JS code contain \n within the JS code, but these are not new lines
+                $contentRemovedWithoutBackslash = str_replace('\\\n', '', $contentRemoved);
+                $countOfLinesRemoved = count(explode('\\n', $contentRemovedWithoutBackslash)) - 1;
+                return $countOfLinesRemoved;
+            }
+
+            $src = file_get_contents('../../js/piwik.js');
+
+            $src = strtr($src, array('\\'=>'\\\\',"'"=>"\\'",'"'=>'\\"',"\r"=>'\\r',"\n"=>'\\n','</'=>'<\/'));
+            $contentRemovedFromPos = strpos($src, '/* startjslint */');
+            $contentToJslint = substr($src, $contentRemovedFromPos);
+
+            echo "$contentToJslint"; ?>';
+
+            var result = JSLINT(src);
+            ok( result, "JSLint validation: please check the browser console for the list of jslint errors." );
+            if (console && console.log && !result) {
+                var countOfLinesRemoved = <?php echo getLineCountJsLintStarted($src,$contentRemovedFromPos); ?>;
+
+                // we fix the line numbers so they match to the line numbers in ../../js/piwik.js
+                JSLINT.errors.forEach( function (item, index) {
+                    item.line += countOfLinesRemoved;
+                    console.log(item);
+                });
+
+                console.log('JSLINT errors', JSLINT.errors);
+            }
+
+            start();
+        });
+
     });
 
     test("JSON", function() {
@@ -2303,7 +2346,7 @@ function PiwikTest() {
     });
 
     test("Tracker setDomains(), isSiteHostName(), isSiteHostPath(), and getLinkIfShouldBeProcessed()", function() {
-        expect(154);
+        expect(165);
 
         var tracker = Piwik.getTracker();
         var initialDomains = tracker.getDomains();
@@ -2321,23 +2364,31 @@ function PiwikTest() {
 
         // test wildcards
         tracker.setDomains( ['*.Example.com'] );
-        propEqual(["*.Example.com", domainAlias], tracker.getDomains()), 'should add domainAlias';
+        propEqual(tracker.getDomains(), ["*.Example.com", domainAlias], 'should add domainAlias');
+
+        tracker.setDomains( ['*.Example.com/'] );
+        propEqual(tracker.getDomains(), ["*.Example.com/", domainAlias], 'should add domainAlias if domain has a slash as it is not a path');
+
+        tracker.setDomains( ['*.Example.com/*'] );
+        propEqual(tracker.getDomains(), ["*.Example.com/*", domainAlias], 'should add domainAlias if domain has /* as it is not a path');
 
         tracker.setDomains( '*.Example.org' );
-        propEqual(["*.Example.org", domainAlias], tracker.getDomains()), 'should handle a string';
+        propEqual(tracker.getDomains(), ["*.Example.org", domainAlias], 'should handle a string');
+
+        tracker.setDomains( ['*.Example.com/path'] );
+        propEqual(tracker.getDomains(), ["*.Example.com/path"], 'if any other domain has path should not add domainAlias');
 
         tracker.setDomains( ['*.Example.com', '*.example.ORG'] );
-        propEqual(["*.Example.com", '*.example.ORG', domainAlias], tracker.getDomains()), 'should be able to set many domains';
+        propEqual(tracker.getDomains(), ["*.Example.com", '*.example.ORG', domainAlias], 'should be able to set many domains');
 
         tracker.setDomains( [] );
-        propEqual([domainAlias], tracker.getDomains()), 'setting an empty array should reset the list';
+        propEqual(tracker.getDomains(), [domainAlias], 'setting an empty array should reset the list');
 
         tracker.setDomains( ['*.Example.com', domainAlias + '/path', '*.example.ORG'] );
-        propEqual(['*.Example.com', domainAlias + '/path', '*.example.ORG'], tracker.getDomains()), 'if domain alias is already given should not add domainAlias';
+        propEqual(tracker.getDomains(), ['*.Example.com', domainAlias + '/path', '*.example.ORG'], 'if domain alias is already given should not add domainAlias');
 
         tracker.setDomains( ['.' + domainAlias + '/path'] );
-        propEqual(['.' + domainAlias + '/path'], tracker.getDomains()), 'if domain alias with subdomain is already given should not add domainAlias';
-
+        propEqual(tracker.getDomains(), ['.' + domainAlias + '/path'], 'if domain alias with subdomain is already given should not add domainAlias');
 
         /**
          * isSiteHostName ()
@@ -2398,16 +2449,20 @@ function PiwikTest() {
 
         // with path
         tracker.setDomains( '.piwik.org/path' );
+        ok( isSiteHostPath('piwik.org', 'path'), 'isSiteHostPath("piwik.org", "path")' );
         ok( isSiteHostPath('piwik.org', '/path'), 'isSiteHostPath("piwik.org", "/path")' );
         ok( isSiteHostPath('piwik.org', '/path/'), 'isSiteHostPath("piwik.org", "/path/")' );
         ok( !isSiteHostPath('piwik.org', '/path.htm'), 'isSiteHostPath("piwik.org", "/path.htm")' );
         ok( isSiteHostPath('piwik.org', '/path/test'), 'isSiteHostPath("piwik.org", "/path/test)' );
         ok( isSiteHostPath('dev.piwik.org', '/path'), 'isSiteHostPath("dev.piwik.org", "/path")' );
+        ok( !isSiteHostPath('piwik.com', ''), '!isSiteHostPath("piwik.com", "")');
+        ok( !isSiteHostPath('piwik.org', '/'), 'isSiteHostPath("piwik.org", "/")' );
         ok( !isSiteHostPath('piwik.org', '/pat'), '!isSiteHostPath("piwik.org", "/pat")');
         ok( !isSiteHostPath('piwik.org', '.com'), '!isSiteHostPath("piwik.org", ".com")');
         ok( !isSiteHostPath('piwik.com', '/path'), '!isSiteHostPath("piwik.com", "/path")');
         ok( !isSiteHostPath('piwik.com', '/path/test'), '!isSiteHostPath("piwik.com", "/path/test")');
-        ok( !isSiteHostPath('piwik.com', ''), '!isSiteHostPath("piwik.com", "/path/test")');
+        ok( !isSiteHostPath('piwik.com', 'path/test'), '!isSiteHostPath("piwik.com", "/path/test")');
+        ok( !isSiteHostPath('piwik.com', 'path/test/'), '!isSiteHostPath("piwik.com", "/path/test")');
 
         // no path
         var domains = ['.piwik.org', 'piwik.org', '*.piwik.org', '.piwik.org/'];
@@ -2433,8 +2488,11 @@ function PiwikTest() {
 
         // multiple paths / domains
         tracker.setDomains( ['piwik.org/path', 'piwik.org/foo', 'piwik.org/bar/baz', '.piwik.pro/test'] );
+        ok( isSiteHostPath('piwik.pro', 'test/bar'), 'isSiteHostPath("piwik.pro", "test/bar")' );
         ok( isSiteHostPath('piwik.pro', '/test/bar'), 'isSiteHostPath("piwik.pro", "/test/bar")' );
         ok( !isSiteHostPath('piwik.org', '/foobar/'), 'isSiteHostPath("piwik.org", "/foobar/")' );
+        ok( !isSiteHostPath('piwik.org', 'foobar/'), 'isSiteHostPath("piwik.org", "foobar/")' );
+        ok( !isSiteHostPath('piwik.org', 'foobar'), 'isSiteHostPath("piwik.org", "foobar")' );
         ok( isSiteHostPath('piwik.org', '/foo/bar'), 'isSiteHostPath("piwik.org", "/foo/bar")' );
         ok( isSiteHostPath('piwik.org', '/bar/baz/foo'), 'isSiteHostPath("piwik.org", "/bar/baz/foo/")' );
         ok( !isSiteHostPath('piwik.org', '/bar/ba'), 'isSiteHostPath("piwik.org", "/bar/ba")' );
@@ -2443,6 +2501,7 @@ function PiwikTest() {
         ok( isSiteHostPath('dev.piwik.pro', '/test'), 'isSiteHostPath("dev.piwik.pro", "/test")' );
         ok( !isSiteHostPath('dev.piwik.pro', 'something/test.htm'), 'isSiteHostPath("dev.piwik.pro", "something/test")' );
         ok( !isSiteHostPath('dev.piwik.pro', '/'), 'isSiteHostPath("dev.piwik.pro", "/")' );
+        ok( !isSiteHostPath('dev.piwik.pro', ''), 'isSiteHostPath("dev.piwik.pro", "")' );
         ok( !isSiteHostPath('piwik.org', '/'), 'isSiteHostPath("piwik.org", "/")' );
         ok( !isSiteHostPath('piwik.pro', '/'), 'isSiteHostPath("piwik.pro", "/")' );
         ok( !isSiteHostPath('piwik.org', '/index.htm'), 'isSiteHostPath("piwik.org", "/index.htm")' );
@@ -2487,7 +2546,6 @@ function PiwikTest() {
         // they should not be detected as outlink as they match one of the domains
         equal(undefined, getLinkIfShouldBeProcessed(createLink('http://www.piwik.org/foo/bar')), 'getLinkIfShouldBeProcessed http://www.piwik.org/foo/bar matches .piwik.org/foo')
         equal(undefined, getLinkIfShouldBeProcessed(createLink('http://piwik.org/foo/bar')), 'getLinkIfShouldBeProcessed http://piwik.org/foo/bar matches .piwik.org/foo')
-        equal(undefined, getLinkIfShouldBeProcessed(createLink('piwik.org/foo/bar')), 'getLinkIfShouldBeProcessed missing protocol only domain given')
         equal(undefined, getLinkIfShouldBeProcessed(createLink('//piwik.org/foo/bar')), 'getLinkIfShouldBeProcessed no protcol but url starts with //')
         equal(undefined, getLinkIfShouldBeProcessed(createLink('http://www.piwik.org/foo?x=1')), 'getLinkIfShouldBeProcessed url with query parameter should detect correct path')
         equal(undefined, getLinkIfShouldBeProcessed(createLink('http://www.piwik.org/foo')), 'getLinkIfShouldBeProcessed path is same as allowed path')
@@ -2497,6 +2555,7 @@ function PiwikTest() {
         equal(undefined, getLinkIfShouldBeProcessed(createLink('http://WWW.PIWIK.ORG/BAR/BAZ')), 'getLinkIfShouldBeProcessed should test everything lowercase')
         equal(undefined, getLinkIfShouldBeProcessed(createLink('http://www.piwik.org/bar/baz/x/y/z')), 'getLinkIfShouldBeProcessed many appended paths')
         equal(undefined, getLinkIfShouldBeProcessed(createLink('http://www.piwik.org/bar/baz?test=1&foo=bar')), 'getLinkIfShouldBeProcessed another test with query parameter and multiple directories')
+        equal('link', getLinkIfShouldBeProcessed(createLink('piwik.org/foo/bar')).type, 'getLinkIfShouldBeProcessed missing protocol only domain given should be outlink as current domain not given in setDomains')
         propEqual({
                 "href": "http://www.piwik.org/foo/download.apk",
                 "type": "download"
@@ -2701,7 +2760,7 @@ function PiwikTest() {
     function getVisitorIdFromCookie(tracker) {
         visitorCookieName = tracker.hook.test._getCookieName('id');
         visitorCookieValue = tracker.hook.test._getCookie(visitorCookieName);
-        return visitorCookieValue.split('.')[0];
+        return visitorCookieValue ? visitorCookieValue.split('.')[0] : '';
     }
 
     test("User ID and Visitor UUID", function() {
@@ -2928,6 +2987,28 @@ function PiwikTest() {
         ok( diffTime >= 2000, 'setLinkTrackingTimer()' );
     });
 
+    test("Generate error messages when calling an undefined API method", function() {
+        expect(2);
+
+        // temporarily reset the console error logger so our errors don't show up in the console log while running tests.
+        var console = {};
+        var errorCallBack = console.error;
+        window.console.error = function() {};
+
+        // Calling undefined methods should generate an error
+        function callNonExistingMethod() {
+            _paq.push(['NonExistingFunction should error and display the error in the console.']);
+        }
+        function callNonExistingMethodWithParameter() {
+            _paq.push(['NonExistingFunction should not error', 'this is a parameter']);
+        }
+
+        throws( callNonExistingMethod, /was not found in "_paq" variable/, 'Expected to raise an error when calling an undefined method.');
+        throws( callNonExistingMethodWithParameter, /was not found in "_paq" variable/, 'Expected to raise an error when calling an undefined method with parameters.');
+
+        window.console.error = errorCallBack;
+    });
+
     test("Overlay URL Normalizer", function() {
         expect(23);
 
@@ -3015,7 +3096,65 @@ function PiwikTest() {
         equal( getPiwikUrlForOverlay('/piwik.php?version=1234'), '/', 'only piwik.php with leading slash with query' );
     });
 
-<?php
+    function generateAnIframeInDocument() {
+        // Generate an iframe, and call the method inside the iframe to check it returns true
+        var hostAndPath = $(location).attr('pathname');
+        var iframe = document.createElement('iframe');
+        iframe.id = "iframeTesting";
+        iframe.style = "display : none";
+        var html = '\
+            <html><body> \
+            <scr' + 'ipt src="' + hostAndPath + '../../js/piwik.js?rand=<?php echo $cacheBuster; ?>" type="text/javascript"></sc' + 'ript> \
+            <scr' + 'ipt src="' + hostAndPath + 'piwiktest.js" type="text/javascript"></sc' + 'ript> \
+            <scr' + 'ipt src="' + hostAndPath + '../../libs/bower_components/jquery/dist/jquery.min.js" type="text/javascript"></sc' + 'ript> \
+            <scr' + 'ipt type="text/javascript"> \
+            window.onload = function() { \
+                $(document).ready(function () { \
+                    window.iframeIsLoaded = true; \
+                    window.isInsideIframe = function () { \
+                        var tracker = Piwik.getTracker(); \
+                        return tracker.hook.test._isInsideAnIframe(); \
+                    }; \
+                });\
+            }; \
+            window.iframeIsLoaded = false; \
+            \
+            </sc' + 'ript> \
+            </body></html>\
+        ';
+
+        document.body.appendChild(iframe);
+        iframe.contentWindow.document.open();
+        iframe.contentWindow.document.write(html);
+        iframe.contentWindow.document.close();
+
+    };
+
+    test("isInsideAnIframe", function() {
+
+        expect(6);
+        var tracker = Piwik.getTracker();
+        var isInsideAnIframe = tracker.hook.test._isInsideAnIframe;
+        equal( typeof isInsideAnIframe, 'function', 'isInsideAnIframe' );
+        equal( isInsideAnIframe(), false, 'these tests are not running inside an iframe, got: ' + isInsideAnIframe());
+        equal( !isInsideAnIframe(), true, 'these tests are not running inside an iframe');
+        equal( document.getElementById("iframeTesting"), undefined, 'the iframe is not loaded yet...');
+
+        generateAnIframeInDocument();
+
+
+        stop();
+        setTimeout(function() {
+            equal( document.getElementById("iframeTesting").contentWindow.iframeIsLoaded, true, 'the iframe is loaded now!');
+            equal( document.getElementById("iframeTesting").contentWindow.isInsideIframe(), true, 'inside an iframe, isInsideAnIframe() returns true');
+
+            start();
+
+        }, 4000); // wait for iframe to load
+
+    });
+
+    <?php
 if ($mysql) {
     ?>
 
@@ -3033,7 +3172,7 @@ if ($mysql) {
     });
 
     test("tracking", function() {
-        expect(117);
+        expect(118);
 
         // Prevent Opera and HtmlUnit from performing the default action (i.e., load the href URL)
         var stopEvent = function (evt) {
@@ -3287,7 +3426,11 @@ if ($mysql) {
         tracker3.addEcommerceItem("SKU NO PRICE NO QUANTITY", "PRODUCT NAME 3", "CATEGORY", "", "" );
         tracker3.addEcommerceItem("SKU ONLY" );
         tracker3.trackEcommerceCartUpdate( 555.55 );
+
         tracker3.trackEcommerceOrder( "ORDER ID YES", 666.66, 333, 222, 111, 1 );
+
+        // the same order tracked once more, should have no items
+        tracker3.trackEcommerceOrder( "ORDER WITHOUT ANY ITEM", 777, 444, 222, 111, 1 );
 
         // do not track
         tracker3.setDoNotTrack(false);
@@ -3342,6 +3485,7 @@ if ($mysql) {
         _paq.push(["addTracker", null, 13]);
         var createdNewTracker = Piwik.getAsyncTracker(null, 13);
         equal(13, createdNewTracker.getSiteId(), "addTracker() was actually added");
+
         createdNewTracker.setCustomData({ "token" : getToken() });
         _paq.push(['trackPageView', 'twoTrackers']);
         tracker.removeAllAsyncTrackersButFirst();
@@ -3351,7 +3495,7 @@ if ($mysql) {
             xhr.open("GET", "piwik.php?requests=" + getToken(), false);
             xhr.send(null);
             results = xhr.responseText;
-            equal( (/<span\>([0-9]+)\<\/span\>/.exec(results))[1], "35", "count tracking events" );
+            equal( (/<span\>([0-9]+)\<\/span\>/.exec(results))[1], "36", "count tracking events" );
 
             // firing callback
             ok( trackLinkCallbackFired, "trackLink() callback fired" );
@@ -3427,6 +3571,9 @@ if ($mysql) {
 
             // Cart update
             ok( /idgoal=0&revenue=555.55&ec_items=%5B%5B%22SKU%20PRODUCT%22%2C%22random%22%2C%22random%20PRODUCT%20CATEGORY%22%2C11.1111%2C2%5D%2C%5B%22SKU%20ONLY%20SKU%22%2C%22%22%2C%22%22%2C0%2C1%5D%2C%5B%22SKU%20ONLY%20NAME%22%2C%22PRODUCT%20NAME%202%22%2C%22%22%2C0%2C1%5D%2C%5B%22SKU%20NO%20PRICE%20NO%20QUANTITY%22%2C%22PRODUCT%20NAME%203%22%2C%22CATEGORY%22%2C0%2C1%5D%2C%5B%22SKU%20ONLY%22%2C%22%22%2C%22%22%2C0%2C1%5D%5D/.test( results ), "logEcommerceCartUpdate() with items" );
+
+            // Ecommerce order recorded twice, but each order empties the cart/list of items, so this order is empty of items
+            ok( /idgoal=0&ec_id=ORDER%20WITHOUT%20ANY%20ITEM&revenue=777&ec_st=444&ec_tx=222&ec_sh=111&ec_dt=1&ec_items=%5B%5D/.test( results ), "logEcommerceOrder() called twice, second time has no item" );
 
             // parameters inserted by plugin hooks
             ok( /testlog/.test( results ), "plugin hook log" );

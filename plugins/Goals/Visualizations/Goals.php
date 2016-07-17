@@ -110,10 +110,13 @@ class Goals extends HtmlTable
         $allGoals = $this->getGoals($idSite);
 
         // set view properties
-        $this->config->columns_to_display = array('label', 'nb_visits');
+        $this->config->columns_to_display = array_unique(array_merge($this->config->columns_to_display,
+            array('label', 'nb_visits', 'nb_uniq_visitors', 'nb_actions', 'nb_actions_per_visit',
+                'avg_time_on_site', 'bounce_rate', 'nb_conversions', 'revenue'))
+        );
 
-        foreach ($allGoals as $goal) {
-            $column        = "goal_{$goal['idgoal']}_conversion_rate";
+        if ($allGoals['ecommerceOrder']) {
+            $column        = "goal_{$allGoals['ecommerceOrder']['idgoal']}_conversion_rate";
             $this->config->columns_to_display[]  = $column;
         }
 

@@ -139,6 +139,24 @@ class API extends \Piwik\Plugin\API
         return $dataTable;
     }
 
+    /**
+     * Returns a report that shows
+     */
+    public function getSourceMedium($idSite, $period, $date, $segment = false)
+    {
+        $dataTable = $this->getReferrerType($idSite, $period, $date, $segment, $typeReferrer = false, $idSubtable = false, $expanded = true);
+
+        if ($dataTable instanceof DataTable\Map) {
+            throw new Exception("Referrers.getAll with multiple sites or dates is not supported (yet).");
+        }
+
+        $dataTable = $dataTable->mergeSubtables($labelColumn = 'referer_type', $useMetadataColumn = true);
+        $dataTable->queueFilter('ReplaceColumnNames');
+        $dataTable->queueFilter('ReplaceSummaryRowLabel');
+
+        return $dataTable;
+    }
+
     public function getKeywords($idSite, $period, $date, $segment = false, $expanded = false, $flat = false)
     {
         $dataTable = Archive::createDataTableFromArchive(Archiver::KEYWORDS_RECORD_NAME, $idSite, $period, $date, $segment, $expanded, $flat);
