@@ -8,14 +8,12 @@
  */
 namespace Piwik\Plugins\Referrers;
 
-use Piwik\Plugin\Manager AS PluginManager;
 use Piwik\API\Request;
 use Piwik\Common;
 use Piwik\DataTable\Map;
 use Piwik\Metrics;
 use Piwik\Period\Range;
 use Piwik\Piwik;
-use Piwik\Plugin\Report;
 use Piwik\SettingsPiwik;
 use Piwik\Translation\Translator;
 use Piwik\View;

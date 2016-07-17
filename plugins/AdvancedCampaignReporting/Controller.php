@@ -75,10 +75,7 @@ class Controller extends \Piwik\Plugin\Controller
             . $this->translator->translate('General_ColumnNbActionsDocumentation') . '<br />'
 
             . '<b>' . $this->translator->translate('General_ColumnNbUsers') . ':</b> '
-            . $this->translator->translate('General_ColumnNbUsersDocumentation') . ' (<a rel="noreferrer"  target="_blank" href="http://piwik.org/docs/user-id/">User ID</a>)<br />'
-
-            . '<b>' . $this->translator->translate('General_ColumnActionsPerVisit') . ':</b> '
-            . $this->translator->translate('General_ColumnActionsPerVisitDocumentation');
+            . $this->translator->translate('General_ColumnNbUsersDocumentation');
 
         $selectableColumns = array(
             'nb_visits',
@@ -103,6 +100,11 @@ class Controller extends \Piwik\Plugin\Controller
         }
 
         return $this->renderView($view);
+    }
+
+    public function getIndexGraph()
+    {
+        return $this->getSourceMediumEvolutionGraph(array(), array(), __FUNCTION__);
     }
 
     public function getKeywordContentFromNameId()
