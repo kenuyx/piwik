@@ -35,8 +35,17 @@ class Controller extends \Piwik\Plugins\Goals\Controller
             throw new Exception("Ecommerce Tracking requires that the plugin Custom Variables is enabled. Please enable the plugin CustomVariables (or ask your admin).");
         }
 
-        $view = $this->getGoalReportView($idGoal = Piwik::LABEL_ID_GOAL_IS_ECOMMERCE_ORDER);
-        $view->displayFullReport = false;
+        $view = $this->getGoalReportView($idGoal = Piwik::LABEL_ID_GOAL_IS_ECOMMERCE_ORDER, array(
+            'category' => Piwik::translate('AdvancedCampaignReporting_Title'),
+            'name' => Piwik::translate('AdvancedCampaignReporting_CombinedSourcesMediums'),
+            'module' => 'AdvancedCampaignReporting',
+            'action' => 'getSourceMedium',
+            'dimension' => Piwik::translate('AdvancedCampaignReporting_CombinedSourceMedium'),
+            'actionToLoadSubTables' => 'getNameFromSourceMediumId',
+            'title' => Piwik::translate('AdvancedCampaignReporting_CombinedSourceMedium'),
+            'order' => 6,
+        ));
+        $view->displayFullReport = true;
         $view->headline = $this->translator->translate('General_EvolutionOverPeriod');
 
         return $view->render();
@@ -66,35 +75,6 @@ class Controller extends \Piwik\Plugins\Goals\Controller
     public function index()
     {
         return $this->ecommerceReport();
-    }
-
-    public function conversions()
-    {
-        if (!\Piwik\Plugin\Manager::getInstance()->isPluginActivated('CustomVariables')) {
-            throw new Exception("Ecommerce Tracking requires that the plugin Custom Variables is enabled. Please enable the plugin CustomVariables (or ask your admin).");
-        }
-
-        $view = new View('@Ecommerce/conversions');
-        $this->setGeneralVariablesView($view);
-
-        $idGoal = Piwik::LABEL_ID_GOAL_IS_ECOMMERCE_ORDER;
-        $goalDefinition['name'] = $this->translator->translate('Goals_Ecommerce');
-        $goalDefinition['allow_multiple'] = true;
-        $ecommerce = $view->ecommerce = true;
-        $view->showHeadline = false;
-        $view->idGoal = $idGoal;
-        $view->goalName = $goalDefinition['name'];
-        $view->goalAllowMultipleConversionsPerVisit = $goalDefinition['allow_multiple'];
-        $view->graphEvolution = $this->getEvolutionGraph(array(), $idGoal, array('nb_conversions'));
-        $view->nameGraphEvolution = 'Goals.getEvolutionGraph' . $idGoal;
-        $view->topDimensions = $this->getTopDimensions($idGoal);
-        $view->displayFullReport = false;
-        $view->headline = $this->translator->translate('General_EvolutionOverPeriod');
-
-        $view->goalReportsByDimension = $this->getGoalReportsByDimensionTable(
-            $view->nb_conversions, isset($ecommerce), !empty($view->cart_nb_conversions));;
-
-        return $view->render();
     }
 
     public function products()

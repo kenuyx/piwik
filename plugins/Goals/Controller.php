@@ -94,7 +94,7 @@ class Controller extends \Piwik\Plugin\Controller
         return $view->render();
     }
 
-    protected function getGoalReportView($idGoal = false)
+    protected function getGoalReportView($idGoal = false, $report = [])
     {
         $view = new View('@Goals/getGoalReportView');
         if ($idGoal == Piwik::LABEL_ID_GOAL_IS_ECOMMERCE_ORDER) {
@@ -133,8 +133,30 @@ class Controller extends \Piwik\Plugin\Controller
         $view->conversion_rate_returning = $this->formatConversionRate($goalMetrics, 'conversion_rate_returning_visit');
         $view->conversion_rate_new = $this->formatConversionRate($goalMetrics, 'conversion_rate_new_visit');
 
-        $view->goalReportsByDimension = $this->getGoalReportsByDimensionTable(
-            $view->nb_conversions, isset($ecommerce), !empty($view->cart_nb_conversions));
+        if (empty($report)) {
+            $view->goalReportsByDimension = $this->getGoalReportsByDimensionTable(
+                $view->nb_conversions, isset($ecommerce), !empty($view->cart_nb_conversions));
+        } else {
+            $goalReportsByDimension = new ReportsByDimension('Goals');
+            $api = $report['module'] . '.' . $report['action'];
+            $title = $report['title'];
+            $defaultParams = array(
+                'viewDataTable' => 'tableGoals',
+                'documentationForGoalsPage' => '1'
+            );
+            $idGoal = Common::getRequestVar('idGoal', '');
+            if ($idGoal === '') {
+                $defaultParams['idGoal'] = '0';
+            }
+            $customParams = array();
+            foreach ($defaultParams as $key => $value) {
+                $customParams[$key] = !empty($metadata[$key]) ? $metadata[$key] : $value;
+            }
+
+            $goalReportsByDimension->setReport($report['category'], $title, $api, $customParams);
+
+            $view->goalReportsByDimension = $goalReportsByDimension->render();
+        }
         return $view;
     }
 

@@ -1,21 +1,23 @@
 <div class="reportsByDimensionView">
 
-    <div class="entityList">
-        {% for category, dimensions in dimensionCategories %}
-        {% set firstCategory = (loop.index0 == 0) %}
-            <div class='dimensionCategory'>
-                {{ category|translate }}
-                <ul class='listCircle'>
-                    {% for idx, dimension in dimensions %}
-                        <li class="reportDimension {% if idx == 0 and firstCategory %}activeDimension{% endif %}"
-                            data-url="{{ dimension.url }}">
-                            <span class='dimension'>{{ dimension.title|translate }}</span>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endfor %}
-    </div>
+    {% if not uniqueReport %}
+        <div class="entityList">
+            {% for category, dimensions in dimensionCategories %}
+            {% set firstCategory = (loop.index0 == 0) %}
+                <div class='dimensionCategory'>
+                    {{ category|translate }}
+                    <ul class='listCircle'>
+                        {% for idx, dimension in dimensions %}
+                            <li class="reportDimension {% if idx == 0 and firstCategory %}activeDimension{% endif %}"
+                                data-url="{{ dimension.url }}">
+                                <span class='dimension'>{{ dimension.title|translate }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
     <div style="float:left;max-width:730px;">
         <div class="loadingPiwik" style="display:none;">

@@ -1,7 +1,6 @@
 {
     "Ecommerce": {
         "PluginDescription": "当用户添加商品到购物车以及产生销售时，Ecommerce都会记录下来，包括商品、商品类目以及被放弃的购物车。",
-        "Conversions": "转化",
         "Sales": "销售",
         "SalesBy": "来自%s",
         "SalesAdjective": "销售%s"
