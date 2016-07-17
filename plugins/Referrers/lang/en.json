@@ -5,6 +5,8 @@
         "CampaignsDocumentation": "Visitors that came to your website as the result of a campaign. %1$s See the %2$s report for more details.",
         "CampaignsReportDocumentation": "This report shows which campaigns led visitors to your website. %1$s For more information about tracking campaigns, read the %2$scampaigns documentation on piwik.org%3$s",
         "ColumnCampaign": "Campaign",
+        "ColumnSource": "Source",
+        "ColumnMedium": "Medium",
         "ColumnSearchEngine": "Search Engine",
         "ColumnSocial": "Social network",
         "ColumnWebsite": "Website",
