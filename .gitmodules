@@ -1,22 +1,6 @@
-[submodule "plugins/SecurityInfo"]
-    path = plugins/SecurityInfo
-    url = https://github.com/piwik/plugin-SecurityInfo.git
-    branch = master
-[submodule "plugins/TreemapVisualization"]
-    path = plugins/TreemapVisualization
-    url = https://github.com/piwik/plugin-TreemapVisualization.git
-    branch = master
 [submodule "plugins/VisitorGenerator"]
     path = plugins/VisitorGenerator
     url = https://github.com/piwik/plugin-VisitorGenerator.git
-    branch = master
-[submodule "plugins/CustomAlerts"]
-    path = plugins/CustomAlerts
-    url = https://github.com/piwik/plugin-CustomAlerts.git
-    branch = master
-[submodule "plugins/TasksTimetable"]
-    path = plugins/TasksTimetable
-    url = https://github.com/piwik/plugin-TasksTimetable.git
     branch = master
 [submodule "plugins/LoginHttpAuth"]
     path = plugins/LoginHttpAuth
@@ -37,10 +21,6 @@
 [submodule "plugins/LogViewer"]
 	path = plugins/LogViewer
 	url = https://github.com/piwik/plugin-LogViewer.git
-    branch = master
-[submodule "plugins/AnonymousPiwikUsageMeasurement"]
-	path = plugins/AnonymousPiwikUsageMeasurement
-	url = https://github.com/piwik/plugin-AnonymousPiwikUsageMeasurement.git
     branch = master
 [submodule "plugins/CustomDimensions"]
 	path = plugins/CustomDimensions
