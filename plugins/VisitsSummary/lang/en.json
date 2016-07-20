@@ -6,7 +6,7 @@
         "GenerateTime": "%s seconds to generate the page",
         "MaxNbActions": "%s max actions in one visit",
         "NbActionsDescription": "%s actions",
-        "NbActionsPerVisit": "%s actions (page views, downloads, outlinks and internal site searches) per visit",
+        "NbActionsPerVisit": "%s actions (page views, internal site searches, downloads and outlinks) per visit",
         "NbDownloadsDescription": "%s downloads",
         "NbKeywordsDescription": "%s unique keywords",
         "NbOutlinksDescription": "%s outlinks",

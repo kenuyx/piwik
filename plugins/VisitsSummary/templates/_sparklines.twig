@@ -24,23 +24,30 @@
             {{ sparkline(urlSparklineBounceRate)|raw }}
             {{ 'VisitsSummary_NbVisitsBounced'|translate("<strong>"~bounceRate|percent~"</strong>")|raw }}
         </div>
-        <div class="sparkline">
-            {{ sparkline(urlSparklineActionsPerVisit)|raw }}
-            {{ 'VisitsSummary_NbActionsPerVisit'|translate("<strong>"~nbActionsPerVisit|number(1)~"</strong>")|raw }}
-        </div>
-        {% if showActionsPluginReports|default(false) %}
-        <div class="sparkline">
-            {{ sparkline(urlSparklineAvgGenerationTime)|raw }}
-            {% set averageGenerationTime=averageGenerationTime|sumtime %}
-            {{ 'VisitsSummary_AverageGenerationTime'|translate("<strong>"~averageGenerationTime~"</strong>")|raw }}
-        </div>
+        {% if showGoalsPluginReports|default(false) %}
+            {% for goal in goalMetrics %}
+                {% set nb_conversions=goal.nb_conversions %}
+                {% set conversion_rate=goal.conversion_rate %}
+                {% set name=goal.name %}
+                <a href="javascript:broadcast.propagateAjax('module=Goals&action=goalReport&idGoal={{ goal.id }}')">
+                    <div class="sparkline">
+                        {{ sparkline(goal.urlSparklineConversions)|raw }}
+                        {{ 'Goals_GoalX'|translate("'"~name~"'") }}
+                        {{ 'Goals_Conversions'|translate("<strong>"~nb_conversions|number~"</strong>")|raw }},
+                        {{ 'Goals_ConversionRate'|translate("<strong>"~conversion_rate|percent~"</strong>")|raw }}
+                    </div>
+                </a>
+            {% endfor %}
         {% endif %}
 
 {% if not isWidget %}
     </div>
     <div class="col-md-6">
 {% endif %}
-
+        <div class="sparkline">
+            {{ sparkline(urlSparklineActionsPerVisit)|raw }}
+            {{ 'VisitsSummary_NbActionsPerVisit'|translate("<strong>"~nbActionsPerVisit|number(1)~"</strong>")|raw }}
+        </div>
         {% if showActionsPluginReports|default(false) %}
             {% if showOnlyActions %}
                 <div class="sparkline">
@@ -70,12 +77,13 @@
                         {{ 'VisitsSummary_NbOutlinksDescription'|translate("<strong>"~nbOutlinks|number~"</strong>")|trim|raw }},
                         {{ 'VisitsSummary_NbUniqueOutlinksDescription'|translate("<strong>"~nbUniqueOutlinks|number~"</strong>")|raw }}
                 </div>
+                <div class="sparkline">
+                    {{ sparkline(urlSparklineAvgGenerationTime)|raw }}
+                    {% set averageGenerationTime=averageGenerationTime|sumtime %}
+                    {{ 'VisitsSummary_AverageGenerationTime'|translate("<strong>"~averageGenerationTime~"</strong>")|raw }}
+                </div>
                 {% endif %}
         {% endif %}
-        <div class="sparkline">
-                {{ sparkline(urlSparklineMaxActions)|raw }}
-                {{ 'VisitsSummary_MaxNbActions'|translate("<strong>"~maxActions|number~"</strong>")|raw }}
-        </div>
 
         {{ postEvent('Template.VisitsSummaryOverviewSparklines') }}
 

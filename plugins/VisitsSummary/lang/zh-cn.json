@@ -6,7 +6,7 @@
         "GenerateTime": "%s 秒来生成这个页面",
         "MaxNbActions": "%s 单次访问的最大活动量",
         "NbActionsDescription": "%s 次活动",
-        "NbActionsPerVisit": "%s 次活动 (查看页面、下载、离站链接和内部搜索)",
+        "NbActionsPerVisit": "%s 次活动 (查看页面、内部搜索、下载和离站链接)",
         "NbDownloadsDescription": "%s 次下载",
         "NbKeywordsDescription": "%s 个关键词",
         "NbOutlinksDescription": "%s 次离站链接",
