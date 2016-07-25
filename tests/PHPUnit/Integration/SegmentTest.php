@@ -69,7 +69,7 @@ class SegmentTest extends IntegrationTestCase
             // OR, with 2 value rewrites
             array('referrerType==search,referrerType==direct', array(
                 'where' => ' (log_visit.referer_type = ? OR log_visit.referer_type = ? )',
-                'bind'  => array(Common::REFERRER_TYPE_SEARCH_ENGINE,
+                'bind'  => array(Common::REFERRER_TYPE_ORGANIC_SEARCH,
                                  Common::REFERRER_TYPE_DIRECT_ENTRY))),
 
             // IS NOT NULL

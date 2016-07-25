@@ -46,7 +46,17 @@ class Controller extends \Piwik\Plugin\Controller
         'outlinksInline'                 => 'VisitsSummary_NbOutlinksDescription',
         'exits'                          => 'General_ColumnExits',
         'exitsInline'                    => 'Transitions_ExitsInline',
-        'bouncesInline'                  => 'Transitions_BouncesInline'
+        'bouncesInline'                  => 'Transitions_BouncesInline',
+        'fromSocialNetwork'              => 'Transitions_FromSocialNetwork',
+        'fromSocialNetworkInline'        => 'Referrers_TypeSocialNetwork',
+        'fromPaidSearch'                 => 'Transitions_FromPaidSearch',
+        'fromPaidSearchInline'           => 'Referrers_TypePaidSearch',
+        'fromDigital'                    => 'Transitions_FromDigital',
+        'fromDigitalInline'              => 'Referrers_TypeDigital',
+        'fromECRM'                       => 'Transitions_FromECRM',
+        'fromECRMInline'                 => 'Referrers_TypeECRM',
+        'fromAffiliates'                 => 'Transitions_FromAffiliates',
+        'fromAffiliatesInline'           => 'Referrers_TypeAffiliates',
     );
 
     /**

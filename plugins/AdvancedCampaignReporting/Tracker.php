@@ -100,7 +100,7 @@ class Tracker
 
             // If for some reason a campaign was detected in Core Tracker
             // but not here, copy that campaign to the Advanced Campaign
-            if($visitToInsert['referer_type'] != Common::REFERRER_TYPE_CAMPAIGN) {
+            if($visitToInsert['referer_type'] != Common::REFERRER_TYPE_OTHERS) {
                 return ;
             }
             $campaignDimensions = array(
@@ -136,7 +136,20 @@ class Tracker
         }
 
         // Overwrite core referer_ fields when an advanced campaign was detected
-        $rowToInsert['referer_type'] = Common::REFERRER_TYPE_CAMPAIGN;
+        $campaignMedium = $campaignDimensions[self::CAMPAIGN_MEDIUM_FIELD];
+        if (in_array($campaignMedium, ['cpc', 'ppc', 'paidsearch'])) {
+            $rowToInsert['referer_type'] = Common::REFERRER_TYPE_PAID_SEARCH;
+        } else if (in_array($campaignMedium, ['display', 'cpm', 'banner'])) {
+            $rowToInsert['referer_type'] = Common::REFERRER_TYPE_DIGITAL;
+        } else if (in_array($campaignMedium, ['email', 'sms', 'mms', 'qr'])) {
+            $rowToInsert['referer_type'] = Common::REFERRER_TYPE_ECRM;
+        } else if (in_array($campaignMedium, ['social', 'social-network', 'social-media', 'sm', 'social network', 'social media'])) {
+            $rowToInsert['referer_type'] = Common::REFERRER_TYPE_SOCIAL;
+        } else if ($campaignMedium == 'affiliate') {
+            $rowToInsert['referer_type'] = Common::REFERRER_TYPE_AFFILIATE;
+        } else {
+            $rowToInsert['referer_type'] = Common::REFERRER_TYPE_OTHERS;
+        }
 
         if (isset($rowToInsert[self::CAMPAIGN_NAME_FIELD])) {
             $rowToInsert['referer_name'] = substr($rowToInsert[self::CAMPAIGN_NAME_FIELD], 0, 70);

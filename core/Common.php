@@ -24,9 +24,14 @@ class Common
 {
     // constants used to map the referrer type to an integer in the log_visit table
     const REFERRER_TYPE_DIRECT_ENTRY = 1;
-    const REFERRER_TYPE_SEARCH_ENGINE = 2;
-    const REFERRER_TYPE_WEBSITE = 3;
-    const REFERRER_TYPE_CAMPAIGN = 6;
+    const REFERRER_TYPE_ORGANIC_SEARCH = 2;
+    const REFERRER_TYPE_REFERRAL = 3;
+    const REFERRER_TYPE_SOCIAL = 4;
+    const REFERRER_TYPE_PAID_SEARCH = 5;
+    const REFERRER_TYPE_OTHERS = 6;
+    const REFERRER_TYPE_DIGITAL = 7;
+    const REFERRER_TYPE_ECRM = 8;
+    const REFERRER_TYPE_AFFILIATE = 9;
 
     // Flag used with htmlspecialchar. See php.net/htmlspecialchars.
     const HTML_ENCODING_QUOTE_STYLE = ENT_QUOTES;

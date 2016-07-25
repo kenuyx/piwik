@@ -82,16 +82,20 @@ class Controller extends \Piwik\Plugin\Controller
         }
 
         // sparkline for the historical data of the above values
-        $view->urlSparklineSearchEngines = $this->getReferrerUrlSparkline(Common::REFERRER_TYPE_SEARCH_ENGINE);
+        $view->urlSparklineSearchEngines = $this->getReferrerUrlSparkline(Common::REFERRER_TYPE_ORGANIC_SEARCH);
         $view->urlSparklineDirectEntry = $this->getReferrerUrlSparkline(Common::REFERRER_TYPE_DIRECT_ENTRY);
-        $view->urlSparklineWebsites = $this->getReferrerUrlSparkline(Common::REFERRER_TYPE_WEBSITE);
-        $view->urlSparklineCampaigns = $this->getReferrerUrlSparkline(Common::REFERRER_TYPE_CAMPAIGN);
+        $view->urlSparklineWebsites = $this->getReferrerUrlSparkline(Common::REFERRER_TYPE_REFERRAL);
+        $view->urlSparklineCampaigns = $this->getReferrerUrlSparkline(Common::REFERRER_TYPE_OTHERS);
+        $view->urlSparklineSocialNetwork = $this->getReferrerUrlSparkline(Common::REFERRER_TYPE_SOCIAL);
+        $view->urlSparklinePaidSearch = $this->getReferrerUrlSparkline(Common::REFERRER_TYPE_PAID_SEARCH);
+        $view->urlSparklineDigital = $this->getReferrerUrlSparkline(Common::REFERRER_TYPE_DIGITAL);
+        $view->urlSparklineECRM = $this->getReferrerUrlSparkline(Common::REFERRER_TYPE_ECRM);
 
         // sparklines for the evolution of the distinct keywords count/websites count/ etc
-        $view->urlSparklineDistinctSearchEngines = $this->getUrlSparkline('getLastDistinctSearchEnginesGraph');
-        $view->urlSparklineDistinctKeywords = $this->getUrlSparkline('getLastDistinctKeywordsGraph');
-        $view->urlSparklineDistinctWebsites = $this->getUrlSparkline('getLastDistinctWebsitesGraph');
-        $view->urlSparklineDistinctCampaigns = $this->getUrlSparkline('getLastDistinctCampaignsGraph');
+//        $view->urlSparklineDistinctSearchEngines = $this->getUrlSparkline('getLastDistinctSearchEnginesGraph');
+//        $view->urlSparklineDistinctKeywords = $this->getUrlSparkline('getLastDistinctKeywordsGraph');
+//        $view->urlSparklineDistinctWebsites = $this->getUrlSparkline('getLastDistinctWebsitesGraph');
+//        $view->urlSparklineDistinctCampaigns = $this->getUrlSparkline('getLastDistinctCampaignsGraph');
 
         return $view->render();
     }
@@ -170,10 +174,15 @@ class Controller extends \Piwik\Plugin\Controller
             "Referrers.getReferrerType", array('disable_queued_filters' => '1', 'date' => $date));
 
         $nameToColumnId = array(
-            'visitorsFromSearchEngines' => Common::REFERRER_TYPE_SEARCH_ENGINE,
+            'visitorsFromSearchEngines' => Common::REFERRER_TYPE_ORGANIC_SEARCH,
             'visitorsFromDirectEntry'   => Common::REFERRER_TYPE_DIRECT_ENTRY,
-            'visitorsFromWebsites'      => Common::REFERRER_TYPE_WEBSITE,
-            'visitorsFromCampaigns'     => Common::REFERRER_TYPE_CAMPAIGN,
+            'visitorsFromWebsites'      => Common::REFERRER_TYPE_REFERRAL,
+            'visitorsFromCampaigns'     => Common::REFERRER_TYPE_OTHERS,
+            'visitorsFromSocialNetwork' => Common::REFERRER_TYPE_SOCIAL,
+            'visitorsFromPaidSearch'    => Common::REFERRER_TYPE_PAID_SEARCH,
+            'visitorsFromDigital'       => Common::REFERRER_TYPE_DIGITAL,
+            'visitorsFromECRM'          => Common::REFERRER_TYPE_ECRM,
+            'visitorsFromAffiliates'    => Common::REFERRER_TYPE_AFFILIATE,
         );
         $return = array();
         foreach ($nameToColumnId as $nameVar => $columnId) {
@@ -188,10 +197,15 @@ class Controller extends \Piwik\Plugin\Controller
     }
 
     protected $referrerTypeToLabel = array(
-        Common::REFERRER_TYPE_DIRECT_ENTRY  => 'Referrers_DirectEntry',
-        Common::REFERRER_TYPE_SEARCH_ENGINE => 'Referrers_SearchEngines',
-        Common::REFERRER_TYPE_WEBSITE       => 'Referrers_Websites',
-        Common::REFERRER_TYPE_CAMPAIGN      => 'Referrers_Campaigns',
+        Common::REFERRER_TYPE_DIRECT_ENTRY   => 'Referrers_DirectEntry',
+        Common::REFERRER_TYPE_ORGANIC_SEARCH => 'Referrers_SearchEngines',
+        Common::REFERRER_TYPE_REFERRAL       => 'Referrers_Websites',
+        Common::REFERRER_TYPE_SOCIAL         => 'Referrers_Socials',
+        Common::REFERRER_TYPE_PAID_SEARCH    => 'Referrers_PaidSearch',
+        Common::REFERRER_TYPE_OTHERS         => 'Referrers_Others',
+        Common::REFERRER_TYPE_DIGITAL        => 'Referrers_Digital',
+        Common::REFERRER_TYPE_ECRM           => 'Referrers_ECRM',
+        Common::REFERRER_TYPE_AFFILIATE      => 'Referrers_Affiliates',
     );
 
     public function getEvolutionGraph($typeReferrer = false, array $columns = array(), array $defaultColumns = array())

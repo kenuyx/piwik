@@ -313,17 +313,27 @@ class API extends \Piwik\Plugin\API
         $selects = array(
             'CASE log_visit.referer_type
 				WHEN ' . Common::REFERRER_TYPE_DIRECT_ENTRY . ' THEN \'\'
-				WHEN ' . Common::REFERRER_TYPE_SEARCH_ENGINE . ' THEN log_visit.referer_keyword
-				WHEN ' . Common::REFERRER_TYPE_WEBSITE . ' THEN log_visit.referer_url
-				WHEN ' . Common::REFERRER_TYPE_CAMPAIGN . ' THEN CONCAT(log_visit.referer_name, \' \', log_visit.referer_keyword)
+				WHEN ' . Common::REFERRER_TYPE_ORGANIC_SEARCH . ' THEN log_visit.referer_keyword
+				WHEN ' . Common::REFERRER_TYPE_SOCIAL . ' THEN log_visit.referer_keyword
+				WHEN ' . Common::REFERRER_TYPE_PAID_SEARCH . ' THEN log_visit.referer_keyword
+				WHEN ' . Common::REFERRER_TYPE_REFERRAL . ' THEN log_visit.referer_url
+				WHEN ' . Common::REFERRER_TYPE_OTHERS . ' THEN CONCAT(log_visit.referer_name, \' \', log_visit.referer_keyword)
+				WHEN ' . Common::REFERRER_TYPE_DIGITAL . ' THEN CONCAT(log_visit.referer_name, \' \', log_visit.referer_keyword)
+				WHEN ' . Common::REFERRER_TYPE_ECRM . ' THEN CONCAT(log_visit.referer_name, \' \', log_visit.referer_keyword)
+				WHEN ' . Common::REFERRER_TYPE_AFFILIATE . ' THEN CONCAT(log_visit.referer_name, \' \', log_visit.referer_keyword)
 			END AS `referrer_data`');
 
         // get one limited group per referrer type
         $rankingQuery->partitionResultIntoMultipleGroups('referer_type', array(
                                                                               Common::REFERRER_TYPE_DIRECT_ENTRY,
-                                                                              Common::REFERRER_TYPE_SEARCH_ENGINE,
-                                                                              Common::REFERRER_TYPE_WEBSITE,
-                                                                              Common::REFERRER_TYPE_CAMPAIGN
+                                                                              Common::REFERRER_TYPE_ORGANIC_SEARCH,
+                                                                              Common::REFERRER_TYPE_REFERRAL,
+                                                                              Common::REFERRER_TYPE_OTHERS,
+                                                                              Common::REFERRER_TYPE_SOCIAL,
+                                                                              Common::REFERRER_TYPE_PAID_SEARCH,
+                                                                              Common::REFERRER_TYPE_DIGITAL,
+                                                                              Common::REFERRER_TYPE_ECRM,
+                                                                              Common::REFERRER_TYPE_AFFILIATE,
                                                                          ));
 
         $type = $this->getColumnTypeSuffix($actionType);
@@ -342,7 +352,7 @@ class API extends \Piwik\Plugin\API
             }
 
             foreach ($subData as &$row) {
-                if ($referrerType == Common::REFERRER_TYPE_SEARCH_ENGINE && empty($row['referrer_data'])) {
+                if ($referrerType == Common::REFERRER_TYPE_ORGANIC_SEARCH && empty($row['referrer_data'])) {
                     $row['referrer_data'] = \Piwik\Plugins\Referrers\API::LABEL_KEYWORD_NOT_DEFINED;
                 }
 
@@ -560,12 +570,22 @@ class API extends \Piwik\Plugin\API
         switch ($referrerId) {
             case Common::REFERRER_TYPE_DIRECT_ENTRY:
                 return Controller::getTranslation('directEntries');
-            case Common::REFERRER_TYPE_SEARCH_ENGINE:
+            case Common::REFERRER_TYPE_ORGANIC_SEARCH:
                 return Controller::getTranslation('fromSearchEngines');
-            case Common::REFERRER_TYPE_WEBSITE:
+            case Common::REFERRER_TYPE_REFERRAL:
                 return Controller::getTranslation('fromWebsites');
-            case Common::REFERRER_TYPE_CAMPAIGN:
+            case Common::REFERRER_TYPE_OTHERS:
                 return Controller::getTranslation('fromCampaigns');
+            case Common::REFERRER_TYPE_SOCIAL:
+                return Controller::getTranslation('fromSocialNetwork');
+            case Common::REFERRER_TYPE_PAID_SEARCH:
+                return Controller::getTranslation('fromPaidSearch');
+            case Common::REFERRER_TYPE_DIGITAL:
+                return Controller::getTranslation('fromDigital');
+            case Common::REFERRER_TYPE_ECRM:
+                return Controller::getTranslation('fromECRM');
+            case Common::REFERRER_TYPE_AFFILIATE:
+                return Controller::getTranslation('fromAffiliates');
             default:
                 return Piwik::translate('General_Others');
         }

@@ -118,7 +118,7 @@ class Archiver extends \Piwik\Plugin\Archiver
 
     protected function aggregateFromLogs($dimensions, $table, $aggregatorMethod, $dataArraySum, $dataArraySubtableSum)
     {
-        $whereClause = $table . ".referer_type = " . Common::REFERRER_TYPE_CAMPAIGN;
+        $whereClause = $table . ".referer_type = " . Common::REFERRER_TYPE_OTHERS;
         $query = $this->getLogAggregator()->$aggregatorMethod($dimensions, $whereClause);
         if ($query === false) {
             return;

@@ -74,13 +74,13 @@ class API extends \Piwik\Plugin\API
         if ($idSubtable !== false) {
             $result = false;
             switch ($idSubtable) {
-                case Common::REFERRER_TYPE_SEARCH_ENGINE:
+                case Common::REFERRER_TYPE_ORGANIC_SEARCH:
                     $result = $this->getKeywords($idSite, $period, $date, $segment);
                     break;
-                case Common::REFERRER_TYPE_WEBSITE:
+                case Common::REFERRER_TYPE_REFERRAL:
                     $result = $this->getWebsites($idSite, $period, $date, $segment);
                     break;
-                case Common::REFERRER_TYPE_CAMPAIGN:
+                case Common::REFERRER_TYPE_OTHERS:
                     $result = $this->getCampaigns($idSite, $period, $date, $segment);
                     break;
                 default: // invalid idSubtable, return whole report
@@ -109,10 +109,15 @@ class API extends \Piwik\Plugin\API
         $dataTable->filter('AddSegmentByLabelMapping', array(
             'referrerType',
             array(
-                Common::REFERRER_TYPE_DIRECT_ENTRY  => 'direct',
-                Common::REFERRER_TYPE_CAMPAIGN      => 'campaign',
-                Common::REFERRER_TYPE_SEARCH_ENGINE => 'search',
-                Common::REFERRER_TYPE_WEBSITE       => 'website',
+                Common::REFERRER_TYPE_DIRECT_ENTRY   => 'direct',
+                Common::REFERRER_TYPE_OTHERS         => 'campaign',
+                Common::REFERRER_TYPE_ORGANIC_SEARCH => 'search',
+                Common::REFERRER_TYPE_REFERRAL       => 'website',
+                Common::REFERRER_TYPE_SOCIAL         => 'social',
+                Common::REFERRER_TYPE_PAID_SEARCH    => 'paid',
+                Common::REFERRER_TYPE_DIGITAL        => 'digital',
+                Common::REFERRER_TYPE_ECRM           => 'ecrm',
+                Common::REFERRER_TYPE_AFFILIATE      => 'affiliate',
             )
         ));
         // set referrer type column to readable value

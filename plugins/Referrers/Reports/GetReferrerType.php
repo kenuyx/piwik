@@ -46,13 +46,13 @@ class GetReferrerType extends Base
         $labelColumnTitle = $this->name;
 
         switch ($idSubtable) {
-            case Common::REFERRER_TYPE_SEARCH_ENGINE:
+            case Common::REFERRER_TYPE_ORGANIC_SEARCH:
                 $labelColumnTitle = Piwik::translate('General_ColumnKeyword');
                 break;
-            case Common::REFERRER_TYPE_WEBSITE:
+            case Common::REFERRER_TYPE_REFERRAL:
                 $labelColumnTitle = Piwik::translate('Referrers_ColumnWebsite');
                 break;
-            case Common::REFERRER_TYPE_CAMPAIGN:
+            case Common::REFERRER_TYPE_OTHERS:
                 $labelColumnTitle = Piwik::translate('Referrers_ColumnCampaign');
                 break;
             default:
