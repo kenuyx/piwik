@@ -101,8 +101,8 @@ install:
 
   # travis now complains about this failing 9 times out of 10, so removing it
   #- travis_retry composer self-update
-
-  - '[ "$SKIP_COMPOSER_INSTALL" == "1" ] || travis_retry composer install'
+  - '[ "$SKIP_COMPOSER_INSTALL" == "1" ] || travis_retry composer install' 
+ 
 
 
 before_script:
@@ -169,7 +169,6 @@ notifications:
   slack:
     rooms:
       - piwik:3HWhNh21qPfDACQXTrJOb0mW
-      - piwikpro:7OABSbDrywSTo2nv9lD2svXG
     on_success: :change
     on_failure: :change
 

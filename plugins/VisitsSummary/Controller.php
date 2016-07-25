@@ -13,6 +13,7 @@ use Piwik\Common;
 use Piwik\DataTable;
 use Piwik\DataTable\Row;
 use Piwik\Piwik;
+use Piwik\Plugins\Goals\TranslationHelper;
 use Piwik\Site;
 use Piwik\Translation\Translator;
 use Piwik\View;
@@ -20,24 +21,24 @@ use Piwik\View;
 /**
  *
  */
-class Controller extends \Piwik\Plugin\Controller
+class Controller extends \Piwik\Plugins\Goals\Controller
 {
     /**
      * @var Translator
      */
     private $translator;
 
-    public function __construct(Translator $translator)
+    public function __construct(Translator $translator, TranslationHelper $translationHelper)
     {
         $this->translator = $translator;
 
-        parent::__construct();
+        parent::__construct($translator, $translationHelper);
     }
 
     public function index()
     {
         $view = new View('@VisitsSummary/index');
-        $this->setPeriodVariablesView($view);
+        $this->setGeneralVariablesView($view);
         $view->graphEvolutionVisitsSummary = $this->getEvolutionGraph(array(), array('nb_visits'), 'getIndexGraph');
         $this->setSparklinesAndNumbers($view);
         return $view->render();
@@ -80,9 +81,6 @@ class Controller extends \Piwik\Plugin\Controller
             . '<b>' . $this->translator->translate('General_ColumnNbActions') . ':</b> '
             . $this->translator->translate('General_ColumnNbActionsDocumentation') . '<br />'
 
-            . '<b>' . $this->translator->translate('General_ColumnNbUsers') . ':</b> '
-            . $this->translator->translate('General_ColumnNbUsersDocumentation') . ' (<a rel="noreferrer"  target="_blank" href="http://piwik.org/docs/user-id/">User ID</a>)<br />'
-
             . '<b>' . $this->translator->translate('General_ColumnActionsPerVisit') . ':</b> '
             . $this->translator->translate('General_ColumnActionsPerVisitDocumentation');
 
@@ -90,19 +88,19 @@ class Controller extends \Piwik\Plugin\Controller
             // columns from VisitsSummary.get
             'nb_visits',
             'nb_uniq_visitors',
-            'nb_users',
+//            'nb_users',
             'avg_time_on_site',
             'bounce_rate',
             'nb_actions_per_visit',
-            'max_actions',
-            'nb_visits_converted',
+//            'max_actions',
+//            'nb_visits_converted',
             // columns from Actions.get
             'nb_pageviews',
             'nb_uniq_pageviews',
-            'nb_downloads',
-            'nb_uniq_downloads',
-            'nb_outlinks',
-            'nb_uniq_outlinks',
+//            'nb_downloads',
+//            'nb_uniq_downloads',
+//            'nb_outlinks',
+//            'nb_uniq_outlinks',
             'avg_time_generation'
         );
 
@@ -215,6 +213,27 @@ class Controller extends \Piwik\Plugin\Controller
                 $view->showOnlyActions = true;
                 $view->nbActions = $dataRow->getColumn('nb_actions');
                 $view->urlSparklineNbActions = $this->getUrlSparkline('getEvolutionGraph', array('columns' => array('nb_actions')));
+            }
+        }
+
+        if (Common::isGoalPluginEnabled()) {
+            $view->showGoalsPluginReports = true;
+
+            $view->goalMetrics = array();
+            foreach ($this->goals as $idGoal => $goal) {
+                if ($goal['name'] != 'Landing Pages') {
+                    $request = new Request("method=Goals.get&format=original&idGoal=$idGoal");
+                    $datatable = $request->process();
+                    $dataRow = $datatable->getFirstRow();
+                    $nbConversions = $dataRow->getColumn('nb_conversions');
+                    $view->goalMetrics[$idGoal] = array(
+                        'id'                         => $idGoal,
+                        'nb_conversions'             => (int)$nbConversions,
+                        'conversion_rate'            => $this->formatConversionRate($dataRow->getColumn('conversion_rate')),
+                        'urlSparklineConversions'    => $this->getUrlSparkline('getEvolutionGraph', array('columns' => array('nb_conversions'), 'idGoal' => $idGoal))
+                    );
+                    $view->goalMetrics[$idGoal]['name'] = strtolower($goal['name']);
+                }
             }
         }
 

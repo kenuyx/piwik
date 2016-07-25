@@ -24,7 +24,7 @@ class Visitor
         if (isset($this->details['campaign_name'])) {
             return $this->details['campaign_name'];
         }
-        return Piwik::translate('General_NotDefined');
+        return Piwik::translate('General_Unknown');
     }
 
     public function getCampaignKeyword()
@@ -32,7 +32,7 @@ class Visitor
         if (isset($this->details['campaign_keyword'])) {
             return $this->details['campaign_keyword'];
         }
-        return Piwik::translate('General_NotDefined');
+        return Piwik::translate('General_Unknown');
     }
 
     public function getCampaignSource()
@@ -40,7 +40,7 @@ class Visitor
         if (isset($this->details['campaign_source'])) {
             return $this->details['campaign_source'];
         }
-        return Piwik::translate('General_NotDefined');
+        return Piwik::translate('General_Unknown');
     }
 
     public function getCampaignMedium()
@@ -48,7 +48,7 @@ class Visitor
         if (isset($this->details['campaign_medium'])) {
             return $this->details['campaign_medium'];
         }
-        return Piwik::translate('General_NotDefined');
+        return Piwik::translate('General_Unknown');
     }
 
     public function getCampaignContent()
@@ -56,7 +56,7 @@ class Visitor
         if (isset($this->details['campaign_content'])) {
             return $this->details['campaign_content'];
         }
-        return Piwik::translate('General_NotDefined');
+        return Piwik::translate('General_Unknown');
     }
 
 }
