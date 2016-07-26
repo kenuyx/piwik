@@ -37,7 +37,7 @@ class GetPageUrls extends Base
             new AveragePageGenerationTime()
         );
 
-        $this->menuTitle   = 'General_Pages';
+        $this->menuTitle   = 'General_Overview';
         $this->widgetTitle = 'General_Pages';
     }
 

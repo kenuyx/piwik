@@ -7,7 +7,7 @@
         "NHour": "%sh",
         "PluginDescription": "Reports the local time and the server time when your visitors view your website or app. ",
         "ServerTime": "Visits per server time",
-        "SubmenuTimes": "Times",
+        "SubmenuTimes": "Visits Distribution",
         "VisitsByDayOfWeek": "Visits by Day of Week",
         "WidgetByDayOfWeekDocumentation": "This graph shows the number of visits your website received on each day of the week.",
         "WidgetLocalTime": "Visits by Local Time",

@@ -16,11 +16,6 @@
             </div>
         {% endif %}
         <div class="sparkline">
-            {{ sparkline(urlSparklineAvgVisitDuration)|raw }}
-            {% set averageVisitDuration=averageVisitDuration|sumtime %}
-            {{ 'VisitsSummary_AverageVisitDuration'|translate("<strong>"~averageVisitDuration~"</strong>")|raw }}
-        </div>
-        <div class="sparkline">
             {{ sparkline(urlSparklineBounceRate)|raw }}
             {{ 'VisitsSummary_NbVisitsBounced'|translate("<strong>"~bounceRate|percent~"</strong>")|raw }}
         </div>
@@ -57,20 +52,7 @@
             {% else %}
                 <div class="sparkline">
                     {{ sparkline(urlSparklineNbPageviews)|raw }}
-                    {{ 'VisitsSummary_NbPageviewsDescription'|translate("<strong>"~nbPageviews|number~"</strong>")|trim|raw }},
-                    {{ 'VisitsSummary_NbUniquePageviewsDescription'|translate("<strong>"~nbUniquePageviews|number~"</strong>")|raw }}
-                </div>
-                {% if displaySiteSearch %}
-                    <div class="sparkline">
-                        {{ sparkline(urlSparklineNbSearches)|raw }}
-                        {{ 'VisitsSummary_NbSearchesDescription'|translate("<strong>"~nbSearches|number~"</strong>")|trim|raw }},
-                        {{ 'VisitsSummary_NbKeywordsDescription'|translate("<strong>"~nbKeywords|number~"</strong>")|raw }}
-                    </div>
-                {% endif %}
-                <div class="sparkline">
-                        {{ sparkline(urlSparklineNbDownloads)|raw }}
-                        {{ 'VisitsSummary_NbDownloadsDescription'|translate("<strong>"~nbDownloads|number~"</strong>")|trim|raw }},
-                        {{ 'VisitsSummary_NbUniqueDownloadsDescription'|translate("<strong>"~nbUniqueDownloads|number~"</strong>")|raw }}
+                    {{ 'VisitsSummary_NbPageviewsDescription'|translate("<strong>"~nbPageviews|number~"</strong>")|trim|raw }}
                 </div>
                 <div class="sparkline">
                         {{ sparkline(urlSparklineNbOutlinks)|raw }}
@@ -84,6 +66,11 @@
                 </div>
                 {% endif %}
         {% endif %}
+        <div class="sparkline">
+            {{ sparkline(urlSparklineAvgVisitDuration)|raw }}
+            {% set averageVisitDuration=averageVisitDuration|sumtime %}
+            {{ 'VisitsSummary_AverageVisitDuration'|translate("<strong>"~averageVisitDuration~"</strong>")|raw }}
+        </div>
 
         {{ postEvent('Template.VisitsSummaryOverviewSparklines') }}
 
