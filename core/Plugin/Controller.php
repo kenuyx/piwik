@@ -343,6 +343,10 @@ abstract class Controller
         }
 
         $view      = ViewDataTableFactory::build(null, $apiAction, $controllerAction);
+        if ($apiAction == 'Ecommerce.getEcommerceOrders') {
+            $view->config->disable_row_actions = true;
+            $view->config->filters[] = array('AddSummaryRow', Piwik::translate('General_Total'));
+        }
         $rendered  = $view->render();
 
         return $rendered;

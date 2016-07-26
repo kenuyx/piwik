@@ -51,6 +51,18 @@ class Controller extends \Piwik\Plugins\Goals\Controller
         return $view->render();
     }
 
+    public function orders()
+    {
+        return $this->getEcommerceOrders();
+    }
+
+    public function getEcommerceOrders() {
+        $view = new View('@Ecommerce/orders');
+        $this->setGeneralVariablesView($view);
+        $view->ecommerceOrders = $this->renderReport(__FUNCTION__);
+        return $view->render();
+    }
+
     public function ecommerceLogReport($fetch = false)
     {
         $view = new View('@Ecommerce/ecommerceLog');
@@ -68,7 +80,6 @@ class Controller extends \Piwik\Plugins\Goals\Controller
         $_GET['widget'] = 1;
         $output = FrontController::getInstance()->dispatch('Live', 'getVisitorLog', array($fetch));
         $_GET   = $saveGET;
-
         return $output;
     }
 
