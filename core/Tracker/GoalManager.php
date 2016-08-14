@@ -286,7 +286,7 @@ class GoalManager
      */
     protected function recordEcommerceGoal(VisitProperties $visitProperties, Request $request, $conversion, $action)
     {
-        $isThereExistingCartInVisit = $this->detectIsThereExistingCartInVisit($visitProperties->getProperties());
+        $isThereExistingCartInVisit = $request->getMetadata('Goals', 'isThereExistingCartInVisit');
         if ($isThereExistingCartInVisit) {
             Common::printDebug("There is an existing cart for this visit");
         }
