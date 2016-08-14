@@ -32,6 +32,7 @@ class GoalManager
     // log_conversion.idgoal special values
     const IDGOAL_CART = -1;
     const IDGOAL_ORDER = 0;
+    const IDGOAL_ABANDONED_ORDER = -2;
 
     const REVENUE_PRECISION = 2;
 
@@ -300,7 +301,7 @@ class GoalManager
             $orderId = $request->getParam('ec_id');
 
             $conversion['idorder'] = $orderId;
-            $conversion['idgoal']  = self::IDGOAL_ORDER;
+            $conversion['idgoal']  = floatval($conversion['revenue']) < 0 ? self::IDGOAL_ABANDONED_ORDER : self::IDGOAL_ORDER;
             $conversion['buster']  = Common::hashStringToInt($orderId);
 
             $conversionDimensions = ConversionDimension::getAllDimensions();
@@ -318,21 +319,24 @@ class GoalManager
 
         Common::printDebug($debugMessage . ':' . var_export($conversion, true));
 
-        // INSERT or Sync items in the Cart / Order for this visit & order
-        $items = $this->getEcommerceItemsFromRequest($request);
+        if ($conversion['idgoal'] != self::IDGOAL_ABANDONED_ORDER) {
+            // INSERT or Sync items in the Cart / Order for this visit & order
+            $items = $this->getEcommerceItemsFromRequest($request);
 
-        if (false === $items) {
-            return;
+            if (false === $items) {
+                return;
+            }
+
+            $itemsCount = 0;
+            foreach ($items as $item) {
+                $itemsCount += $item[GoalManager::INTERNAL_ITEM_QUANTITY];
+            }
+
+            $conversion['items'] = $itemsCount;
         }
 
-        $itemsCount = 0;
-        foreach ($items as $item) {
-            $itemsCount += $item[GoalManager::INTERNAL_ITEM_QUANTITY];
-        }
-
-        $conversion['items'] = $itemsCount;
-
-        if ($isThereExistingCartInVisit) {
+        if ($isThereExistingCartInVisit
+            || $conversion['idgoal'] == self::IDGOAL_ABANDONED_ORDER) {
             $recorded = $this->getModel()->updateConversion(
                 $visitProperties->getProperty('idvisit'), self::IDGOAL_CART, $conversion);
         } else {

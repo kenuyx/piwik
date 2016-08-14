@@ -50,15 +50,24 @@ class Model
 
     public function updateConversion($idVisit, $idGoal, $newConversion)
     {
-        $updateWhere = array(
-            'idvisit' => $idVisit,
-            'idgoal'  => $idGoal,
-            'buster'  => 0,
-        );
+        $updateWhere = $newConversion['idgoal'] == GoalManager::IDGOAL_ABANDONED_ORDER ?
+            array(
+                'idsite' => $newConversion['idsite'],
+                'idorder' => $newConversion['idorder']
+            ) :
+            array(
+                'idvisit' => $idVisit,
+                'idgoal' => $idGoal,
+                'buster' => 0,
+            );
 
         $updateParts = $sqlBind = $updateWhereParts = array();
 
         foreach ($newConversion as $name => $value) {
+            if ($newConversion['idgoal'] == GoalManager::IDGOAL_ABANDONED_ORDER
+                && in_array($name, ['revenue', 'revenue_subtotal'])) {
+                continue;
+            }
             $updateParts[] = $name . " = ?";
             $sqlBind[]     = $value;
         }
