@@ -103,18 +103,18 @@ abstract class ControllerAdmin extends Controller
         }
 
 
-        $message = Piwik::translate('General_CurrentlyUsingUnsecureHttp');
-
-        $message .= " ";
-
-        $message .= Piwik::translate('General_ReadThisToLearnMore',
-            array('<a rel="noreferrer" target="_blank" href="https://piwik.org/faq/how-to/faq_91/">', '</a>')
-          );
-
-        $notification = new Notification($message);
-        $notification->context = Notification::CONTEXT_WARNING;
-        $notification->raw     = true;
-        Notification\Manager::notify('ControllerAdmin_HttpIsUsed', $notification);
+//        $message = Piwik::translate('General_CurrentlyUsingUnsecureHttp');
+//
+//        $message .= " ";
+//
+//        $message .= Piwik::translate('General_ReadThisToLearnMore',
+//            array('<a rel="noreferrer" target="_blank" href="https://piwik.org/faq/how-to/faq_91/">', '</a>')
+//          );
+//
+//        $notification = new Notification($message);
+//        $notification->context = Notification::CONTEXT_WARNING;
+//        $notification->raw     = true;
+//        Notification\Manager::notify('ControllerAdmin_HttpIsUsed', $notification);
     }
 
     /**
