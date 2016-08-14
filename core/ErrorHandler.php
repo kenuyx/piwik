@@ -108,7 +108,7 @@ class ErrorHandler
     private static function createLogMessage($errno, $errstr, $errfile, $errline)
     {
         return sprintf(
-            "%s(%d): %s - %s - Piwik " . (class_exists('Piwik\Version') ? Version::VERSION : '') . " - Please report this message in the Piwik forums: http://forum.piwik.org (please do a search first as it might have been reported already)",
+            "%s(%d): %s - %s - Tracking System " . (class_exists('Piwik\Version') ? Version::VERSION : ''),
             $errfile,
             $errline,
             ErrorHandler::getErrNoString($errno),
