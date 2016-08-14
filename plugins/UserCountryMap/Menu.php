@@ -15,10 +15,10 @@ class Menu extends \Piwik\Plugin\Menu
 {
     public function configureReportingMenu(MenuReporting $menu)
     {
-        if (PluginManager::getInstance()->isPluginActivated('UserCountry')) {
-            $menu->addVisitorsItem('UserCountryMap_RealTimeMap',
-                                   $this->urlForAction('realtimeWorldMap'),
-                                   $order = 70);
-        }
+//        if (PluginManager::getInstance()->isPluginActivated('UserCountry')) {
+//            $menu->addVisitorsItem('UserCountryMap_RealTimeMap',
+//                                   $this->urlForAction('realtimeWorldMap'),
+//                                   $order = 70);
+//        }
     }
 }
