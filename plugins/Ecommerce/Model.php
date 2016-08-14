@@ -85,10 +85,10 @@ class Model
             log_conversion.campaign_source as source,
             log_conversion.campaign_medium as medium,
             " . LogAggregator::getSqlRevenue('revenue') . " as revenue,
-            " . LogAggregator::getSqlRevenue('revenue_tax') . " as tax,
             " . LogAggregator::getSqlRevenue('revenue_shipping') . " as shipping,
-            " . LogAggregator::getSqlRevenue('revenue_discount') . " as discount
-            ";
+            " . LogAggregator::getSqlRevenue('revenue_subtotal') . " as subtotal,
+            " . LogAggregator::getSqlRevenue('revenue_discount') . " as discount,
+            log_conversion.custom_var_k1 as mobile";
         $from = "log_conversion";
         $groupBy = false;
         $limit = $limit >= 1 ? (int)$limit : 0;
