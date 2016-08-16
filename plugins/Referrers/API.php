@@ -75,6 +75,7 @@ class API extends \Piwik\Plugin\API
             $result = false;
             switch ($idSubtable) {
                 case Common::REFERRER_TYPE_ORGANIC_SEARCH:
+                case Common::REFERRER_TYPE_PAID_SEARCH:
                     $result = $this->getKeywords($idSite, $period, $date, $segment);
                     break;
                 case Common::REFERRER_TYPE_REFERRAL:
