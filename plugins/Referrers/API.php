@@ -81,10 +81,8 @@ class API extends \Piwik\Plugin\API
                 case Common::REFERRER_TYPE_REFERRAL:
                     $result = $this->getWebsites($idSite, $period, $date, $segment);
                     break;
-                case Common::REFERRER_TYPE_OTHERS:
+                default:
                     $result = $this->getCampaigns($idSite, $period, $date, $segment);
-                    break;
-                default: // invalid idSubtable, return whole report
                     break;
             }
 
