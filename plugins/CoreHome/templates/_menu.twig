@@ -1,5 +1,5 @@
 {% macro submenuItem(name, url, anchorlink, tooltip) %}
-    {% if name|slice(0,1) != '_' %}
+    {% if name|slice(0,1) != '_' and name != 'Users' %}
         <li role="menuitem" title="{{ tooltip|default("")|translate|e('html_attr') }}">
             <a class="item" href="{% if anchorlink %}#{% else %}index.php?{% endif %}{{ url|urlRewriteWithParameters|slice(1) }}" tabindex="5">
                 {{ name|translate }}

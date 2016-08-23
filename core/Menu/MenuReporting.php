@@ -46,9 +46,6 @@ class MenuReporting extends MenuAbstract
      */
     public function addVisitorsItem($menuName, $url, $order = 50, $tooltip = false)
     {
-        if ('Users' == $menuName) {
-            return;
-        }
         $this->addItem('General_Visitors', $menuName, $url, $order, $tooltip);
     }
 
