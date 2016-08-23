@@ -88,7 +88,7 @@ class Model
             " . LogAggregator::getSqlRevenue('revenue_shipping') . " as shipping,
             " . LogAggregator::getSqlRevenue('revenue_subtotal') . " as subtotal,
             " . LogAggregator::getSqlRevenue('revenue_discount') . " as discount,
-            log_conversion.custom_var_v1 as mobile";
+            log_conversion.custom_var_v1 as mobile, log_conversion.custom_var_v2 as member";
         $from = "log_conversion";
         $groupBy = false;
         $limit = $limit >= 1 ? (int)$limit : 0;
