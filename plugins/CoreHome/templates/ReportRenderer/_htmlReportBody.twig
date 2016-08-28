@@ -59,6 +59,8 @@
                                         </a>
                                     {% endif %}
                                 {% endif %}
+                            {% elseif columnId == 'mobile' or columnId == 'member' %}
+                                {{ rowMetrics[columnId] | raw }}
                             {% else %}
                                 {% if rowMetrics[columnId] is empty %}
                                     0
