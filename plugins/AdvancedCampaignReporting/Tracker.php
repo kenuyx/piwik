@@ -137,7 +137,7 @@ class Tracker
 
         // Overwrite core referer_ fields when an advanced campaign was detected
         $campaignMedium = $campaignDimensions[self::CAMPAIGN_MEDIUM_FIELD];
-        if (in_array($campaignMedium, ['cpc', 'ppc', 'paidsearch'])) {
+        if (in_array($campaignMedium, ['cpc', 'ppc', 'bppc', 'paidsearch'])) {
             $rowToInsert['referer_type'] = Common::REFERRER_TYPE_PAID_SEARCH;
         } else if (in_array($campaignMedium, ['display', 'cpm', 'banner'])) {
             $rowToInsert['referer_type'] = Common::REFERRER_TYPE_DIGITAL;
