@@ -128,7 +128,7 @@
         "DownloadFail_HttpRequestFail": "无法下载文件！您下载文件的网站有问题，请稍后重试或自己获得文件。",
         "DownloadFullVersion": "%1$s下载%2$s完整版本！来吧 %3$s",
         "DownloadPleaseRemoveExisting": "如果要替换，请删除已有文件。",
-        "Downloads": "下载次数",
+        "Downloads": "分享次数",
         "EcommerceOrders": "订单",
         "EcommerceVisitStatusDesc": "访问结束时的电子商务状态",
         "EcommerceVisitStatusEg": "例如，要选择所有下订单的访问，API 请求要包含 %s",

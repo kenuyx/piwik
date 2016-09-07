@@ -128,7 +128,7 @@
         "DownloadFail_HttpRequestFail": "Could not download the file! Something might be wrong with the website you're downloading from. You could try again later or get the file by yourself.",
         "DownloadFullVersion": "%1$sDownload%2$s the full version! Check out %3$s",
         "DownloadPleaseRemoveExisting": "If you want it to be replaced, please remove the existing file.",
-        "Downloads": "Downloads",
+        "Downloads": "Shares",
         "EcommerceOrders": "Ecommerce Orders",
         "EcommerceVisitStatusDesc": "Visit Ecommerce status at the end of the visit",
         "EcommerceVisitStatusEg": "For example, to select all visits that have made an Ecommerce order, the API request would contain %s",
