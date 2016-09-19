@@ -81,7 +81,7 @@ class Archiver extends \Piwik\Plugin\Archiver
     protected function aggregateVisitRow($row)
     {
         switch ($row['referer_type']) {
-            case Common::REFERRER_TYPE_ORGANIC_SEARCH:
+            case Common::REFERRER_TYPE_SEARCH_ENGINE:
             case Common::REFERRER_TYPE_SOCIAL:
             case Common::REFERRER_TYPE_PAID_SEARCH:
                 if (empty($row['referer_keyword'])) {
@@ -95,7 +95,7 @@ class Archiver extends \Piwik\Plugin\Archiver
                 $keywordsDataArray->sumMetricsVisitsPivot($row['referer_keyword'], $row['referer_name'], $row);
                 break;
 
-            case Common::REFERRER_TYPE_REFERRAL:
+            case Common::REFERRER_TYPE_WEBSITE:
                 $this->getDataArray(self::WEBSITES_RECORD_NAME)->sumMetricsVisits($row['referer_name'], $row);
                 $this->getDataArray(self::WEBSITES_RECORD_NAME)->sumMetricsVisitsPivot($row['referer_name'], $row['referer_url'], $row);
 
@@ -105,7 +105,7 @@ class Archiver extends \Piwik\Plugin\Archiver
                 }
                 break;
 
-            case Common::REFERRER_TYPE_OTHERS:
+            case Common::REFERRER_TYPE_CAMPAIGN:
             case Common::REFERRER_TYPE_DIGITAL:
             case Common::REFERRER_TYPE_ECRM:
             case Common::REFERRER_TYPE_AFFILIATE:
@@ -159,7 +159,7 @@ class Archiver extends \Piwik\Plugin\Archiver
     {
         $skipAggregateByType = false;
         switch ($row['referer_type']) {
-            case Common::REFERRER_TYPE_ORGANIC_SEARCH:
+            case Common::REFERRER_TYPE_SEARCH_ENGINE:
             case Common::REFERRER_TYPE_SOCIAL:
             case Common::REFERRER_TYPE_PAID_SEARCH:
                 if (empty($row['referer_keyword'])) {
@@ -170,11 +170,11 @@ class Archiver extends \Piwik\Plugin\Archiver
                 $this->getDataArray(self::KEYWORDS_RECORD_NAME)->sumMetricsGoals($row['referer_keyword'], $row);
                 break;
 
-            case Common::REFERRER_TYPE_REFERRAL:
+            case Common::REFERRER_TYPE_WEBSITE:
                 $this->getDataArray(self::WEBSITES_RECORD_NAME)->sumMetricsGoals($row['referer_name'], $row);
                 break;
 
-            case Common::REFERRER_TYPE_OTHERS:
+            case Common::REFERRER_TYPE_CAMPAIGN:
             case Common::REFERRER_TYPE_DIGITAL:
             case Common::REFERRER_TYPE_ECRM:
             case Common::REFERRER_TYPE_AFFILIATE:

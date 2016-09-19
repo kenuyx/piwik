@@ -47,47 +47,37 @@
     </div>
 </div>
 
-<div class="row">
+<div id="distinctReferrersByType" class="row">
     <div class="col-md-6">
-        <div class="sparkline" style="padding-left: 12px;">{{ sparkline(urlSparklineSocialNetwork) }}
-            {{ 'Referrers_TypeSocialNetwork'|translate("<strong>"~visitorsFromSocialNetwork|number~"</strong>")|raw }}
-            {% if visitorsFromSocialNetworkPercent|default is not empty %},
-                {{ 'Referrers_XPercentOfVisits'|translate("<strong>"~visitorsFromSocialNetworkPercent|percent~"</strong>")|raw }}
-            {% endif %}
-            {% if visitorsFromSocialNetworkEvolution|default is not empty %}
-                {{ visitorsFromSocialNetworkEvolution|raw }}
+        <div class="sparkline" style="padding-left: 12px;">{{ sparkline(urlSparklineDistinctSearchEngines) }}
+            <strong>{{ numberDistinctSearchEngines|number }}</strong> {{ 'Referrers_DistinctSearchEngines'|translate }}
+            {% if numberDistinctSearchEnginesEvolution|default is not empty %}
+                {{ numberDistinctSearchEnginesEvolution|raw }}
             {% endif %}
         </div>
-        <div class="sparkline" style="padding-left: 12px;">{{ sparkline(urlSparklinePaidSearch) }}
-            {{ 'Referrers_TypePaidSearch'|translate("<strong>"~visitorsFromPaidSearch|number~"</strong>")|raw }}
-            {% if visitorsFromPaidSearchPercent|default is not empty %},
-                {{ 'Referrers_XPercentOfVisits'|translate("<strong>"~visitorsFromPaidSearchPercent|percent~"</strong>")|raw }}
-            {% endif %}
-            {% if visitorsFromPaidSearchEvolution|default is not empty %}
-                {{ visitorsFromPaidSearchEvolution|raw }}
+        <div class="sparkline" style="padding-left: 12px;">{{ sparkline(urlSparklineDistinctKeywords) }}
+            <strong>{{ numberDistinctKeywords|number }}</strong> {{ 'Referrers_DistinctKeywords'|translate }}
+            {% if numberDistinctKeywordsEvolution|default is not empty %}
+                {{ numberDistinctKeywordsEvolution|raw }}
             {% endif %}
         </div>
     </div>
     <div class="col-md-6">
-        <div class="sparkline">{{ sparkline(urlSparklineDigital) }}
-            {{ 'Referrers_TypeDigital'|translate("<strong>"~visitorsFromDigital|number~"</strong>")|raw }}
-            {% if visitorsFromDigitalPercent|default is not empty %},
-                {{ 'Referrers_XPercentOfVisits'|translate("<strong>"~visitorsFromDigitalPercent|percent~"</strong>")|raw }}
-            {% endif %}
-            {% if visitorsFromDigitalEvolution|default is not empty %}
-                {{ visitorsFromDigitalEvolution|raw }}
+        <div class="sparkline">{{ sparkline(urlSparklineDistinctWebsites) }}
+            <strong>{{ numberDistinctWebsites|number }}</strong> {{ 'Referrers_DistinctWebsites'|translate }}
+            {{ 'Referrers_UsingNDistinctUrls'|translate("<strong>"~numberDistinctWebsitesUrls|number~"</strong>")|raw }}
+            {% if numberDistinctWebsitesEvolution|default is not empty %}
+                {{ numberDistinctWebsitesEvolution|raw }}
             {% endif %}
         </div>
-        <div class="sparkline">{{ sparkline(urlSparklineECRM) }}
-            {{ 'Referrers_TypeECRM'|translate("<strong>"~visitorsFromECRM|number~"</strong>")|raw }}
-            {% if visitorsFromECRMPercent|default is not empty %},
-                {{ 'Referrers_XPercentOfVisits'|translate("<strong>"~visitorsFromECRMPercent|percent~"</strong>")|raw }}
-            {% endif %}
-            {% if visitorsFromECRMEvolution|default is not empty %}
-                {{ visitorsFromECRMEvolution|raw }}
+        <div class="sparkline">{{ sparkline(urlSparklineDistinctCampaigns) }}
+            <strong>{{ numberDistinctCampaigns|number }}</strong> {{ 'Referrers_DistinctCampaigns'|translate }}
+            {% if numberDistinctCampaignsEvolution|default is not empty %}
+                {{ numberDistinctCampaignsEvolution|raw }}
             {% endif %}
         </div>
     </div>
+    <br/>
 </div>
 
 <div style="float:left;" class="relatedReferrerReports">{{ 'General_View'|translate }}

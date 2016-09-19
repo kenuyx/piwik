@@ -74,15 +74,17 @@ class API extends \Piwik\Plugin\API
         if ($idSubtable !== false) {
             $result = false;
             switch ($idSubtable) {
-                case Common::REFERRER_TYPE_ORGANIC_SEARCH:
+                case Common::REFERRER_TYPE_SEARCH_ENGINE:
                 case Common::REFERRER_TYPE_PAID_SEARCH:
                     $result = $this->getKeywords($idSite, $period, $date, $segment);
                     break;
-                case Common::REFERRER_TYPE_REFERRAL:
+                case Common::REFERRER_TYPE_WEBSITE:
                     $result = $this->getWebsites($idSite, $period, $date, $segment);
                     break;
-                default:
+                case Common::REFERRER_TYPE_CAMPAIGN:
                     $result = $this->getCampaigns($idSite, $period, $date, $segment);
+                    break;
+                default: // invalid idSubtable, return whole report
                     break;
             }
 
@@ -108,15 +110,15 @@ class API extends \Piwik\Plugin\API
         $dataTable->filter('AddSegmentByLabelMapping', array(
             'referrerType',
             array(
-                Common::REFERRER_TYPE_DIRECT_ENTRY   => 'direct',
-                Common::REFERRER_TYPE_OTHERS         => 'campaign',
-                Common::REFERRER_TYPE_ORGANIC_SEARCH => 'search',
-                Common::REFERRER_TYPE_REFERRAL       => 'website',
-                Common::REFERRER_TYPE_SOCIAL         => 'social',
-                Common::REFERRER_TYPE_PAID_SEARCH    => 'paid',
-                Common::REFERRER_TYPE_DIGITAL        => 'digital',
-                Common::REFERRER_TYPE_ECRM           => 'ecrm',
-                Common::REFERRER_TYPE_AFFILIATE      => 'affiliate',
+                Common::REFERRER_TYPE_DIRECT_ENTRY  => 'direct',
+                Common::REFERRER_TYPE_CAMPAIGN      => 'campaign',
+                Common::REFERRER_TYPE_SEARCH_ENGINE => 'search',
+                Common::REFERRER_TYPE_WEBSITE       => 'website',
+                Common::REFERRER_TYPE_PAID_SEARCH   => 'search',
+                Common::REFERRER_TYPE_SOCIAL        => 'search',
+                Common::REFERRER_TYPE_DIGITAL       => 'campaign',
+                Common::REFERRER_TYPE_ECRM          => 'campaign',
+                Common::REFERRER_TYPE_AFFILIATE     => 'campaign',
             )
         ));
         // set referrer type column to readable value

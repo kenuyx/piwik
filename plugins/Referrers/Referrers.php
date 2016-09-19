@@ -86,15 +86,15 @@ class Referrers extends \Piwik\Plugin
             case Common::REFERRER_TYPE_DIRECT_ENTRY:
                 $indexTranslation = 'Referrers_DirectEntry';
                 break;
-            case Common::REFERRER_TYPE_ORGANIC_SEARCH:
-            case Common::REFERRER_TYPE_SOCIAL:
+            case Common::REFERRER_TYPE_SEARCH_ENGINE:
             case Common::REFERRER_TYPE_PAID_SEARCH:
                 $indexTranslation = 'General_ColumnKeyword';
                 break;
-            case Common::REFERRER_TYPE_REFERRAL:
+            case Common::REFERRER_TYPE_WEBSITE:
+            case Common::REFERRER_TYPE_SOCIAL:
                 $indexTranslation = 'Referrers_ColumnWebsite';
                 break;
-            case Common::REFERRER_TYPE_OTHERS:
+            case Common::REFERRER_TYPE_CAMPAIGN:
             case Common::REFERRER_TYPE_DIGITAL:
             case Common::REFERRER_TYPE_ECRM:
             case Common::REFERRER_TYPE_AFFILIATE:

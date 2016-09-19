@@ -39,29 +39,29 @@ function getReferrerTypeLabel($label)
         case Common::REFERRER_TYPE_DIRECT_ENTRY:
             $indexTranslation = 'Referrers_DirectEntry';
             break;
-        case Common::REFERRER_TYPE_ORGANIC_SEARCH:
+        case Common::REFERRER_TYPE_SEARCH_ENGINE:
             $indexTranslation = 'Referrers_SearchEngines';
             break;
-        case Common::REFERRER_TYPE_REFERRAL:
+        case Common::REFERRER_TYPE_WEBSITE:
             $indexTranslation = 'Referrers_Websites';
             break;
         case Common::REFERRER_TYPE_SOCIAL:
-            $indexTranslation = 'Referrers_Socials';
+            $indexTranslation = 'Referrers_Websites';
             break;
         case Common::REFERRER_TYPE_PAID_SEARCH:
-            $indexTranslation = 'Referrers_PaidSearch';
+            $indexTranslation = 'Referrers_SearchEngines';
             break;
         case Common::REFERRER_TYPE_DIGITAL:
-            $indexTranslation = 'Referrers_Digital';
+            $indexTranslation = 'Referrers_Campaigns';
             break;
         case Common::REFERRER_TYPE_ECRM:
-            $indexTranslation = 'Referrers_ECRM';
+            $indexTranslation = 'Referrers_Campaigns';
             break;
         case Common::REFERRER_TYPE_AFFILIATE:
-            $indexTranslation = 'Referrers_Affiliates';
+            $indexTranslation = 'Referrers_Campaigns';
             break;
-        case Common::REFERRER_TYPE_OTHERS:
-            $indexTranslation = 'Referrers_Others';
+        case Common::REFERRER_TYPE_CAMPAIGN:
+            $indexTranslation = 'Referrers_Campaigns';
             break;
         default:
             // case of newsletter, partners, before Piwik 0.2.25
@@ -80,15 +80,15 @@ function getReferrerTypeLabel($label)
 function getReferrerTypeFromShortName($name)
 {
     $map = array(
-        Common::REFERRER_TYPE_ORGANIC_SEARCH => 'search',
-        Common::REFERRER_TYPE_REFERRAL       => 'website',
-        Common::REFERRER_TYPE_DIRECT_ENTRY   => 'direct',
-        Common::REFERRER_TYPE_OTHERS         => 'campaign',
-        Common::REFERRER_TYPE_SOCIAL         => 'social',
-        Common::REFERRER_TYPE_PAID_SEARCH    => 'paid',
-        Common::REFERRER_TYPE_DIGITAL        => 'digital',
-        Common::REFERRER_TYPE_ECRM           => 'ecrm',
-        Common::REFERRER_TYPE_AFFILIATE      => 'affiliate',
+        Common::REFERRER_TYPE_SEARCH_ENGINE => 'search',
+        Common::REFERRER_TYPE_WEBSITE       => 'website',
+        Common::REFERRER_TYPE_DIRECT_ENTRY  => 'direct',
+        Common::REFERRER_TYPE_CAMPAIGN      => 'campaign',
+        Common::REFERRER_TYPE_SOCIAL        => 'website',
+        Common::REFERRER_TYPE_PAID_SEARCH   => 'search',
+        Common::REFERRER_TYPE_DIGITAL       => 'campaign',
+        Common::REFERRER_TYPE_ECRM          => 'campaign',
+        Common::REFERRER_TYPE_AFFILIATE     => 'campaign',
     );
     if (isset($map[$name])) {
         return $map[$name];

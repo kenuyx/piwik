@@ -12,11 +12,11 @@ use Piwik\Common;
 use Piwik\Piwik;
 use Piwik\Plugin\Dimension\VisitDimension;
 use Piwik\Plugins\Referrers\SearchEngine AS SearchEngineDetection;
-use Piwik\Plugins\Referrers\Social AS SocialDetection;
 use Piwik\Plugins\SitesManager\SiteUrls;
 use Piwik\Tracker\Cache;
 use Piwik\Tracker\PageUrl;
 use Piwik\Tracker\Request;
+use Piwik\Tracker\Visit;
 use Piwik\Tracker\Visitor;
 use Piwik\Tracker\Action;
 use Piwik\UrlHelper;
@@ -35,7 +35,6 @@ abstract class Base extends VisitDimension
     protected $idsite;
 
     private static $cachedReferrerSearchEngine = array();
-    private static $cachedReferrerSocialNetwork = array();
 
     // Used to prefix when a adsense referrer is detected
     const LABEL_PREFIX_ADWORDS_KEYWORD = '(adwords) ';
@@ -101,14 +100,13 @@ abstract class Base extends VisitDimension
         if (!$referrerDetected) {
             if ($this->detectReferrerDirectEntry()
                 || $this->detectReferrerSearchEngine()
-                || $this->detectReferrerSocialNetwork()
             ) {
                 $referrerDetected = true;
             }
         }
 
         if (!$referrerDetected && !empty($this->referrerHost)) {
-            $this->typeReferrerAnalyzed = Common::REFERRER_TYPE_REFERRAL;
+            $this->typeReferrerAnalyzed = Common::REFERRER_TYPE_WEBSITE;
             $this->nameReferrerAnalyzed = Common::mb_strtolower($this->referrerHost);
 
             $urlsByHost = $this->getCachedUrlsByHostAndIdSite();
@@ -174,52 +172,9 @@ abstract class Base extends VisitDimension
             return false;
         }
 
-        $this->typeReferrerAnalyzed = Common::REFERRER_TYPE_ORGANIC_SEARCH;
+        $this->typeReferrerAnalyzed = Common::REFERRER_TYPE_SEARCH_ENGINE;
         $this->nameReferrerAnalyzed = $searchEngineInformation['name'];
         $this->keywordReferrerAnalyzed = $searchEngineInformation['keywords'];
-        return true;
-    }
-
-    /**
-     * Social network detection
-     * @return bool
-     */
-    protected function detectReferrerSocialNetwork()
-    {
-        if (isset(self::$cachedReferrerSocialNetwork[$this->referrerUrl])) {
-            $socialNetworkName = self::$cachedReferrerSocialNetwork[$this->referrerUrl];
-        } else {
-            $socialNetworkName = SocialDetection::getInstance()->isSocialUrl($this->referrerUrl);
-
-            if ($socialNetworkName) {
-                $socialNetworkName = SocialDetection::getInstance()->getSocialNetworkFromDomain($this->referrerUrl);
-            }
-
-            /**
-             * Triggered when detecting the social network of a referrer URL.
-             *
-             * Plugins can use this event to provide custom search engine detection
-             * logic.
-             *
-             * @param array &$socialNetworkName The social network name.
-             *
-             *                                        This parameter is initialized to the results
-             *                                        of Piwik's default social network detection
-             *                                        logic.
-             * @param string referrerUrl The referrer URL from the tracking request.
-             */
-            Piwik::postEvent('Tracker.detectReferrerSocialNetwork', array(&$socialNetworkName, $this->referrerUrl));
-
-            self::$cachedReferrerSocialNetwork[$this->referrerUrl] = $socialNetworkName;
-        }
-
-        if ($socialNetworkName === false) {
-            return false;
-        }
-
-        $this->typeReferrerAnalyzed = Common::REFERRER_TYPE_SOCIAL;
-        $this->nameReferrerAnalyzed = 'Referral';
-        $this->keywordReferrerAnalyzed = $socialNetworkName;
         return true;
     }
 
@@ -239,7 +194,7 @@ abstract class Base extends VisitDimension
         if (empty($campaignName)) {
             return false;
         }
-        $this->typeReferrerAnalyzed = Common::REFERRER_TYPE_OTHERS;
+        $this->typeReferrerAnalyzed = Common::REFERRER_TYPE_CAMPAIGN;
         $this->nameReferrerAnalyzed = $campaignName;
 
         foreach ($this->campaignKeywords as $campaignKeywordParameter) {
@@ -286,7 +241,7 @@ abstract class Base extends VisitDimension
             return false;
         }
 
-        $this->typeReferrerAnalyzed = Common::REFERRER_TYPE_OTHERS;
+        $this->typeReferrerAnalyzed = Common::REFERRER_TYPE_CAMPAIGN;
         $this->nameReferrerAnalyzed = $campaignName;
 
         $keyword = $this->getReferrerCampaignQueryParam($request, '_rck');
@@ -381,7 +336,7 @@ abstract class Base extends VisitDimension
                         $type = $this->getParameterValueFromReferrerUrl('ad_type');
                         $type = $type ? " ($type)" : '';
                         $this->nameReferrerAnalyzed = self::LABEL_ADWORDS_NAME . $type;
-                        $this->typeReferrerAnalyzed = Common::REFERRER_TYPE_OTHERS;
+                        $this->typeReferrerAnalyzed = Common::REFERRER_TYPE_CAMPAIGN;
                     }
                     $this->keywordReferrerAnalyzed = self::LABEL_PREFIX_ADWORDS_KEYWORD . $parsedAdsenseReferrerUrl['host'];
                 }
@@ -412,7 +367,7 @@ abstract class Base extends VisitDimension
         $this->detectCampaignKeywordFromReferrerUrl();
 
         $isCurrentVisitACampaignWithSameName = $visitor->getVisitorColumn('referer_name') == $this->nameReferrerAnalyzed;
-        $isCurrentVisitACampaignWithSameName = $isCurrentVisitACampaignWithSameName && $visitor->getVisitorColumn('referer_type') == Common::REFERRER_TYPE_OTHERS;
+        $isCurrentVisitACampaignWithSameName = $isCurrentVisitACampaignWithSameName && $visitor->getVisitorColumn('referer_type') == Common::REFERRER_TYPE_CAMPAIGN;
 
         // if we detected a campaign but there is still no keyword set, we set the keyword to the Referrer host
         if (empty($this->keywordReferrerAnalyzed)) {
@@ -431,7 +386,7 @@ abstract class Base extends VisitDimension
             }
         }
 
-        if ($this->typeReferrerAnalyzed != Common::REFERRER_TYPE_OTHERS) {
+        if ($this->typeReferrerAnalyzed != Common::REFERRER_TYPE_CAMPAIGN) {
             $this->keywordReferrerAnalyzed = null;
             $this->nameReferrerAnalyzed = null;
             return false;
@@ -472,14 +427,14 @@ abstract class Base extends VisitDimension
         // 0) In some (unknown!?) cases the campaign is not found in the attribution cookie, but the URL ref was found.
         //    In this case we look up if the current visit is credited to a campaign and will credit this campaign rather than the URL ref (since campaigns have higher priority)
         if (empty($referrerCampaignName)
-            && $type == Common::REFERRER_TYPE_OTHERS
+            && $type == Common::REFERRER_TYPE_CAMPAIGN
             && !empty($name)
         ) {
             // Use default values per above
             Common::printDebug("Invalid Referrer information found: current visitor seems to have used a campaign, but campaign name was not found in the request.");
         } // 1) Campaigns from 1st party cookie
         elseif (!empty($referrerCampaignName)) {
-            $type    = Common::REFERRER_TYPE_OTHERS;
+            $type    = Common::REFERRER_TYPE_CAMPAIGN;
             $name    = $referrerCampaignName;
             $keyword = $referrerCampaignKeyword;
             Common::printDebug("Campaign information from 1st party cookie is used.");
@@ -490,7 +445,7 @@ abstract class Base extends VisitDimension
             $referrer = $this->getReferrerInformation($referrerUrl, $currentUrl = '', $idSite, $request, $visitor);
 
             // if the parsed referrer is interesting enough, ie. website or search engine
-            if (in_array($referrer['referer_type'], array(Common::REFERRER_TYPE_ORGANIC_SEARCH, Common::REFERRER_TYPE_REFERRAL))) {
+            if (in_array($referrer['referer_type'], array(Common::REFERRER_TYPE_SEARCH_ENGINE, Common::REFERRER_TYPE_WEBSITE))) {
                 $type    = $referrer['referer_type'];
                 $name    = $referrer['referer_name'];
                 $keyword = $referrer['referer_keyword'];
@@ -525,7 +480,7 @@ abstract class Base extends VisitDimension
      */
     protected function setCampaignValuesToLowercase($type, &$name, &$keyword)
     {
-        if ($type === Common::REFERRER_TYPE_OTHERS) {
+        if ($type === Common::REFERRER_TYPE_CAMPAIGN) {
             if (!empty($name)) {
                 $name = Common::mb_strtolower($name);
             }

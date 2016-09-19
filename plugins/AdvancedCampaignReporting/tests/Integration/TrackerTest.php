@@ -62,7 +62,7 @@ class TrackerTest extends IntegrationTestCase
                 'expected' => [
                     'campaign_name'     => 'camapaign1',
                     'campaign_keyword'  => 'kwd1',
-                    'referer_type'      => Common::REFERRER_TYPE_OTHERS,
+                    'referer_type'      => Common::REFERRER_TYPE_CAMPAIGN,
                     'referer_name'      => 'camapaign1',
                     'referer_keyword'   => 'kwd1'
                 ],
@@ -76,7 +76,7 @@ class TrackerTest extends IntegrationTestCase
                 'expected' => [
                     'campaign_name'     => 'Campaign name with longer than 255 chars. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ligula dolor, pulvinar in aliquet eget, accumsan suscipit mauris. Maecenas rhoncus rhoncus tortor in egestas. Praesent condimentum neque nec dapibus bl',
                     'campaign_keyword'  => 'Keyword with longer than 255 chars. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ligula dolor, pulvinar in aliquet eget, accumsan suscipit mauris. Maecenas rhoncus rhoncus tortor in egestas. Praesent condimentum neque nec dapibus blandit.',
-                    'referer_type'      => Common::REFERRER_TYPE_OTHERS,
+                    'referer_type'      => Common::REFERRER_TYPE_CAMPAIGN,
                     'referer_name'      => 'Campaign name with longer than 255 chars. Lorem ipsum dolor sit amet, ',
                     'referer_keyword'   => 'Keyword with longer than 255 chars. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ligula dolor, pulvinar in aliquet eget, accumsan suscipit mauris. Maecenas rhoncus rhoncus tortor in egestas. Praesent condimentum neque nec dapibus blandit.'
                 ],
@@ -93,7 +93,7 @@ class TrackerTest extends IntegrationTestCase
                 'expected' => [
                     'campaign_name'     => 'camapaign1',
                     'campaign_keyword'  => 'kwd1',
-                    'referer_type'      => Common::REFERRER_TYPE_OTHERS,
+                    'referer_type'      => Common::REFERRER_TYPE_CAMPAIGN,
                     'referer_name'      => 'camapaign1',
                     'referer_keyword'   => 'kwd1'
                 ],
@@ -104,14 +104,14 @@ class TrackerTest extends IntegrationTestCase
                 'expected' => [
                     'campaign_name'     => 'campname2',
                     'campaign_keyword'  => 'sdf2',
-                    'referer_type'      => Common::REFERRER_TYPE_OTHERS,
+                    'referer_type'      => Common::REFERRER_TYPE_CAMPAIGN,
                     'referer_name'      => 'campname2',
                     'referer_keyword'   => 'sdf2'
                 ],
             ],
             'no campaign parameters in url' => [
                 'visitorInfo' => [
-                    'referer_type'      => Common::REFERRER_TYPE_OTHERS,
+                    'referer_type'      => Common::REFERRER_TYPE_CAMPAIGN,
                     'referer_name'      => 'campname2',
                     'referer_keyword'   => 'sdf2'
                 ],
@@ -119,7 +119,7 @@ class TrackerTest extends IntegrationTestCase
                 'expected' => [
                     'campaign_name'     => 'campname2',
                     'campaign_keyword'  => 'sdf2',
-                    'referer_type'      => Common::REFERRER_TYPE_OTHERS,
+                    'referer_type'      => Common::REFERRER_TYPE_CAMPAIGN,
                     'referer_name'      => 'campname2',
                     'referer_keyword'   => 'sdf2'
                 ],
