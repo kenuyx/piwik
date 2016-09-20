@@ -82,7 +82,6 @@ class Archiver extends \Piwik\Plugin\Archiver
     {
         switch ($row['referer_type']) {
             case Common::REFERRER_TYPE_ORGANIC_SEARCH:
-            case Common::REFERRER_TYPE_SOCIAL:
             case Common::REFERRER_TYPE_PAID_SEARCH:
                 if (empty($row['referer_keyword'])) {
                     $row['referer_keyword'] = API::LABEL_KEYWORD_NOT_DEFINED;
@@ -105,6 +104,7 @@ class Archiver extends \Piwik\Plugin\Archiver
                 }
                 break;
 
+            case Common::REFERRER_TYPE_SOCIAL:
             case Common::REFERRER_TYPE_OTHERS:
             case Common::REFERRER_TYPE_DIGITAL:
             case Common::REFERRER_TYPE_ECRM:

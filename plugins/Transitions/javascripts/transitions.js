@@ -1344,15 +1344,15 @@ Piwik_Transitions_Model.prototype.loadData = function (actionType, actionName, s
                 var referrer = report.referrers[i];
                 if (referrer.shortName == 'direct') {
                     self.directEntries = referrer.visits;
-                } else if (referrer.shortName == 'search') {
+                } else if (referrer.shortName == 'organic' || referrer.shortName == 'paid') {
                     self.searchEnginesNbTransitions = referrer.visits;
                     self.searchEngines = referrer.details;
                     self.groupTitles.searchEngines = referrer.label;
-                } else if (referrer.shortName == 'website') {
+                } else if (referrer.shortName == 'referral') {
                     self.websitesNbTransitions = referrer.visits;
                     self.websites = referrer.details;
                     self.groupTitles.websites = referrer.label;
-                } else if (referrer.shortName == 'campaign') {
+                } else if (['social', 'others', 'digital', 'e-crm', 'affiliate'].indexOf(referrer.shortName) >= 0) {
                     self.campaignsNbTransitions = referrer.visits;
                     self.campaigns = referrer.details;
                     self.groupTitles.campaigns = referrer.label;

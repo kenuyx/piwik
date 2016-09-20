@@ -87,18 +87,28 @@ class Referrers extends \Piwik\Plugin
                 $indexTranslation = 'Referrers_DirectEntry';
                 break;
             case Common::REFERRER_TYPE_ORGANIC_SEARCH:
+                $indexTranslation = 'Referrers_ColumnOrganicSearch';
+                break;
             case Common::REFERRER_TYPE_SOCIAL:
+                $indexTranslation = 'Referrers_ColumnSocial';
+                break;
             case Common::REFERRER_TYPE_PAID_SEARCH:
-                $indexTranslation = 'General_ColumnKeyword';
+                $indexTranslation = 'General_ColumnPaidSearch';
                 break;
             case Common::REFERRER_TYPE_REFERRAL:
-                $indexTranslation = 'Referrers_ColumnWebsite';
+                $indexTranslation = 'Referrers_ColumnReferral';
                 break;
             case Common::REFERRER_TYPE_OTHERS:
+                $indexTranslation = 'Referrers_ColumnOthers';
+                break;
             case Common::REFERRER_TYPE_DIGITAL:
+                $indexTranslation = 'Referrers_ColumnDigital';
+                break;
             case Common::REFERRER_TYPE_ECRM:
+                $indexTranslation = 'Referrers_ColumnECRM';
+                break;
             case Common::REFERRER_TYPE_AFFILIATE:
-                $indexTranslation = 'Referrers_ColumnCampaign';
+                $indexTranslation = 'Referrers_ColumnAffiliate';
                 break;
             default:
                 // case of newsletter, partners, before Piwik 0.2.25

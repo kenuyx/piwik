@@ -40,7 +40,7 @@
         {%- set keywordNotDefined = 'General_NotDefined'|translate('General_ColumnKeyword'|translate) -%}
         <li>
             <span>{{ 'General_DateRangeFrom'|translate }}</span>
-            <strong {% if visitData.referrerType == 'search' and '(' not in visitReferralSummary %}title="{{ keywordNotDefined }}"{% endif %}>{{ visitReferralSummary }}</strong>
+            <strong {% if visitData.referrerType in ['organic', 'paid'] and '(' not in visitReferralSummary %}title="{{ keywordNotDefined }}"{% endif %}>{{ visitReferralSummary }}</strong>
         </li>
         {% endif %}
     </ul>

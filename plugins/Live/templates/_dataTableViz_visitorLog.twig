@@ -71,20 +71,20 @@
 
     {% set referrerContent %}
     <div class="visitorReferrer">
-        {% if visitor.getColumn('referrerType') == 'website' %}
+        {% if visitor.getColumn('referrerType') == 'referral' %}
             {{ 'Referrers_ColumnWebsite'|translate }}:
             <a href="{{ visitor.getColumn('referrerUrl') }}" rel="noreferrer" target="_blank" class="visitorLogTooltip" title="{{ visitor.getColumn('referrerUrl') }}"
                style="text-decoration:underline;">
                 {{ visitor.getColumn('referrerName') }}
             </a>
         {% endif %}
-        {% if visitor.getColumn('referrerType') == 'campaign' %}
-            {{ 'Referrers_ColumnCampaign'|translate }}: {{ visitor.getColumn('referrerName') }}
+        {% if visitor.getColumn('referrerType') in ['others', 'social', 'digital', 'e-crm', 'affiliate'] %}
+            {{ {others:'Referrers_ColumnOthers',social:'Referrers_ColumnSocial',digital:'Referrers_ColumnDigital',e-crm:'Referrers_ColumnECRM',affiliate:'Referrers_ColumnAffiliate'}[visitor.getColumn('referrerType')]|translate }}: {{ visitor.getColumn('referrerName') }}
             {% if visitor.getColumn('referrerKeyword') is not empty %} - {{ visitor.getColumn('referrerKeyword') }}{% endif %}
             <br/>{{ 'Referrers_ColumnSource'|translate }}: {{ visitor.getColumn('campaignSource') }}
             <br/>{{ 'Referrers_ColumnMedium'|translate }}: {{ visitor.getColumn('campaignMedium') }}
         {% endif %}
-        {% if visitor.getColumn('referrerType') == 'search' %}
+        {% if visitor.getColumn('referrerType') in ['organic', 'paid'] %}
             {%- set keywordNotDefined = 'General_NotDefined'|translate('General_ColumnKeyword'|translate) -%}
             {%- set showKeyword = visitor.getColumn('referrerKeyword') is not empty and visitor.getColumn('referrerKeyword') != keywordNotDefined -%}
             {% if visitor.getColumn('searchEngineIcon') %}

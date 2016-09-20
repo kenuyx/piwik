@@ -42,7 +42,7 @@ class Visitor
     {
         $keyword = $this->details['referer_keyword'];
         
-        if ($this->getReferrerType() == 'search') {
+        if (in_array($this->getReferrerType(), ['organic', 'paid'])) {
             $keyword = API::getCleanKeyword($keyword);
         }
 
@@ -51,7 +51,7 @@ class Visitor
 
     public function getReferrerUrl()
     {
-        if ($this->getReferrerType() == 'search') {
+        if (in_array($this->getReferrerType(), ['organic', 'paid'])) {
             if ($this->details['referer_keyword'] == API::LABEL_KEYWORD_NOT_DEFINED) {
 
                 return 'http://piwik.org/faq/general/#faq_144';
@@ -79,7 +79,7 @@ class Visitor
 
     public function getKeywordPosition()
     {
-        if ($this->getReferrerType() == 'search'
+        if (in_array($this->getReferrerType(), ['organic', 'paid'])
             && strpos($this->getReferrerName(), 'Google') !== false
         ) {
             $url = @parse_url($this->details['referer_url']);
@@ -105,7 +105,7 @@ class Visitor
 
     public function getSearchEngineUrl()
     {
-        if ($this->getReferrerType() == 'search'
+        if (in_array($this->getReferrerType(), ['organic', 'paid'])
             && !empty($this->details['referer_name'])
         ) {
 

@@ -109,13 +109,13 @@ class API extends \Piwik\Plugin\API
             'referrerType',
             array(
                 Common::REFERRER_TYPE_DIRECT_ENTRY   => 'direct',
-                Common::REFERRER_TYPE_OTHERS         => 'campaign',
-                Common::REFERRER_TYPE_ORGANIC_SEARCH => 'search',
-                Common::REFERRER_TYPE_REFERRAL       => 'website',
+                Common::REFERRER_TYPE_OTHERS         => 'others',
+                Common::REFERRER_TYPE_ORGANIC_SEARCH => 'organic',
+                Common::REFERRER_TYPE_REFERRAL       => 'referral',
                 Common::REFERRER_TYPE_SOCIAL         => 'social',
                 Common::REFERRER_TYPE_PAID_SEARCH    => 'paid',
                 Common::REFERRER_TYPE_DIGITAL        => 'digital',
-                Common::REFERRER_TYPE_ECRM           => 'ecrm',
+                Common::REFERRER_TYPE_ECRM           => 'e-crm',
                 Common::REFERRER_TYPE_AFFILIATE      => 'affiliate',
             )
         ));

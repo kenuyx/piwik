@@ -125,7 +125,7 @@ class VisitorProfile
             return Piwik::translate('Referrers_DirectEntry');
         }
 
-        if ($referrerType == 'search') {
+        if (in_array($referrerType, ['organic', 'paid'])) {
             $referrerName = $visit->getColumn('referrerName');
 
             $keyword = $visit->getColumn('referrerKeyword');
@@ -137,9 +137,14 @@ class VisitorProfile
             return $referrerName;
         }
 
-        if ($referrerType == 'campaign') {
-
-            $summary = Piwik::translate('Referrers_ColumnCampaign') . ': ' . $visit->getColumn('referrerName');
+        if (in_array($referrerType, ['others', 'social', 'digital', 'e-crm', 'affiliate'])) {
+            $summary = Piwik::translate([
+                'others'    => 'Referrers_ColumnOthers',
+                'social'    => 'Referrers_ColumnSocial',
+                'digital'   => 'Referrers_ColumnDigital',
+                'e-crm'     => 'Referrers_ColumnECRM',
+                'affiliate' => 'Referrers_ColumnAffiliate'
+            ][$referrerType]) . ': ' . $visit->getColumn('referrerName');
             $keyword = $visit->getColumn('referrerKeyword');
             if (!empty($keyword)) {
                 $summary .= ' - ' . $keyword;
